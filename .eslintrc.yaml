@@ -1,0 +1,30 @@
+extends:
+  - plugin:@typescript-eslint/eslint-recommended
+parser: "@typescript-eslint/parser"
+parserOptions:
+  sourceType: module
+plugins:
+  - "@typescript-eslint"
+rules:
+  "@typescript-eslint/brace-style":
+    - 2
+    - stroustrup
+  "@typescript-eslint/indent":
+    - 2
+    - 2
+  "@typescript-eslint/member-delimiter-style":
+    - 2
+    - multiline:
+        delimiter: comma
+        requireLast: false
+  "@typescript-eslint/no-explicit-any": 2
+  "@typescript-eslint/no-unused-vars": 2
+  "@typescript-eslint/quotes":
+    - 2
+    - single
+  "@typescript-eslint/semi": 2
+  brace-style: 0
+  indent: 0
+  no-unused-vars: 0
+  quotes: 0
+  semi: 0
