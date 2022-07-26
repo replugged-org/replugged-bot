@@ -1,6 +1,9 @@
-import { CommandClient } from 'eris';
+import type { Db } from 'mongodb'
 
 declare module 'eris' {
+  interface CommandClient {
+    mango: Db
+  }
 
   interface Guild {
     _client: CommandClient

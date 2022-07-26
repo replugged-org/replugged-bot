@@ -2,6 +2,7 @@ import { CommandClient } from 'eris';
 import dotenv from 'dotenv';
 import { basename } from 'path';
 import { readdirRecursive } from './util.js';
+import { MongoClient } from 'mongodb';
 
 dotenv.config({path: 'config.env'});
 
@@ -53,11 +54,15 @@ async function loadCommand(command: string) {
   );
 }
 
-Promise.all([
-  bot.connect(),
-  readdirRecursive(new URL('./modules/', import.meta.url)).then((modules: string[]) => Promise.all(modules.map(loadModule))),
-  readdirRecursive(new URL('./commands/', import.meta.url)).then((commands: string[]) => Promise.all(commands.map(loadCommand)))
-]);
+Promise.resolve(new MongoClient('mongodb://127.0.0.1:27017'))
+  .then((client) => client.connect())
+  .then((client) => (bot.mango = client.db('replugged')))
+  .then(() => readdirRecursive(new URL('./modules/', import.meta.url)))
+  .then((modules: string[]) => Promise.all(modules.map(loadModule)))
+  .then(() => readdirRecursive(new URL('./commands/', import.meta.url)))
+  .then((commands: string[]) => Promise.all(commands.map(loadCommand)))
+  .then(() => bot.connect())
+  .catch((e: Error) => console.error('An error occured during startup lol', e));
 
 bot.on('ready', () => {
   console.log('Logged in as %s#%s', bot.user.username, bot.user.discriminator);
