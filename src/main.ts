@@ -60,7 +60,7 @@ Promise.resolve(new MongoClient('mongodb://127.0.0.1:27017'))
   .then(() => readdirRecursive(new URL('./modules/', import.meta.url)))
   .then((modules: string[]) => Promise.all(modules.map(loadModule)))
   .then(() => readdirRecursive(new URL('./commands/', import.meta.url)))
-  .then((commands: string[]) => Promise.all(commands.map(loadCommand)))
+  .then((commands: string[]) => Promise.all(commands.map(loadCommand)).catch((e) => console.error(e)))
   .then(() => bot.connect())
   .catch((e: Error) => console.error('An error occured during startup lol', e));
 

@@ -59,7 +59,6 @@ function extractMedia(msg: Message<GuildTextableChannel>): {image?: EmbedImage; 
 }
 
 function generateMessage(stars: number, msg: Message<GuildTextableChannel>) {
-  console.log(EMOTES.filter((e) => e[0] <= stars).pop()!);
   const [, star, color] = EMOTES.filter((e) => e[0] <= stars).pop()!;
 
   return {
