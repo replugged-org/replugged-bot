@@ -29,7 +29,7 @@ const EMOTES: BoardDecoration = [
   [ 20, '✨', 0xffff00 ],
 ];
 
-function isProcessable(msg: Message<GuildTextableChannel>) {
+function isProcessable(msg: Message<GuildTextableChannel>): boolean {
   return !msg.channel.nsfw
         && msg.channel.id !== IDS.channels.starboard
         && !(msg.content.length === 0 && msg.attachments.length === 0 && (!msg.embeds[0] || msg.embeds[0].type !== 'image'));
@@ -82,7 +82,7 @@ function generateMessage(stars: number, msg: Message<GuildTextableChannel>) {
   };
 }
 
-async function updateStarCount(msg: Message<GuildTextableChannel>, count: number) {
+async function updateStarCount(msg: Message<GuildTextableChannel>, count: number): Promise<void> {
   if(!msg.author) msg = await msg.channel.getMessage(msg.id);
 
   const channel = IDS.channels.starboard;
@@ -112,7 +112,7 @@ async function updateStarCount(msg: Message<GuildTextableChannel>, count: number
   );
 }
 
-async function process(msg: Message<GuildTextableChannel>, emoji: PartialEmoji, user: HasId) {
+async function process(msg: Message<GuildTextableChannel>, emoji: PartialEmoji, user: HasId): Promise<void> {
   if(emoji.name !== STARBOARD_EMOTE) return;
 
   if(!msg.author) msg = await msg.channel.getMessage(msg.id);
@@ -130,9 +130,7 @@ async function process(msg: Message<GuildTextableChannel>, emoji: PartialEmoji, 
   }
 }
 
-export default function (bot: CommandClient) {
-
-
+export default function (bot: CommandClient): void {
   bot.on('messageReactionAdd', (msg, emoji, user) => process(msg as Message<GuildTextableChannel>, emoji as PartialEmoji, user as HasId));
   bot.on('messageReactionRemove', (msg, emoji, user) => process(msg as Message<GuildTextableChannel>, emoji as PartialEmoji, { id: user } as HasId));
   bot.on('messageReactionRemoveAll', (msg) => updateStarCount(msg as Message<GuildTextableChannel>, 0));

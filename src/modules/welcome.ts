@@ -1,7 +1,7 @@
 import { CommandClient, Member, Guild, GuildTextableChannel } from 'eris';
 import { IDS, MESSAGES } from '../constants.js';
 
-function processMember(guild: Guild, member: Member) {
+function processMember(guild: Guild, member: Member): void {
   if(guild.id !== IDS.server) return;
     
   const welcomeChannel = guild.channels.get(IDS.channels.welcome) as GuildTextableChannel;
@@ -13,6 +13,6 @@ function processMember(guild: Guild, member: Member) {
   );
 }
 
-export default function (bot: CommandClient) {
+export default function (bot: CommandClient): void {
   bot.on('guildMemberAdd', processMember);
 }

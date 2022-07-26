@@ -24,7 +24,7 @@ function isPrivate (channel: TextChannel) {
   return Boolean((channel.permissionOverwrites.get(channel.guild.id)?.deny ?? 0n) & 1024n);
 }
 
-async function store(msg: MessageLike, type: 'edit' | 'delete') {
+async function store(msg: MessageLike, type: 'edit' | 'delete'): Promise<void> {
   const id = Math.random();
   buffer.set(id, {
     author: `${msg.author.username}#${msg.author.discriminator}`,
@@ -36,7 +36,7 @@ async function store(msg: MessageLike, type: 'edit' | 'delete') {
   setTimeout(() => buffer.delete(id), SNIPE_LIFETIME * 1e3);
 }
 
-function processEdit(msg: Message<GuildTextableChannel>, old: OldMessage | null) {
+function processEdit(msg: Message<GuildTextableChannel>, old: OldMessage | null): void {
   if (!old || 
     !msg.author || 
     msg.channel.guild.id !== IDS.server || 
@@ -50,7 +50,7 @@ function processEdit(msg: Message<GuildTextableChannel>, old: OldMessage | null)
   store({...msg, content: old.content}, 'edit');
 }
 
-function processDelete(msg: PossiblyUncachedMessage) {
+function processDelete(msg: PossiblyUncachedMessage): void {
   if (!('author' in msg) || 
   msg.channel.guild.id !== IDS.server || 
   msg.author.bot || 
@@ -64,13 +64,13 @@ function processDelete(msg: PossiblyUncachedMessage) {
   store(msg, 'delete');
 }
 
-export function getLastMessages() {
+export function getLastMessages(): SnipeRecord[] {
   const res = Array.from(buffer.values());
   buffer.clear();
   return res;
 }
 
-export default function (bot: CommandClient) {
+export default function (bot: CommandClient): void {
   bot.on('messageUpdate', processEdit);
   bot.on('messageDelete', processDelete);
 }
