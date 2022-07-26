@@ -21,7 +21,7 @@ async function addTag(msg: Message<GuildTextableChannel>, args: string[]): Promi
     return;
   }
   
-  await msg._client.mango.collection<DatabaseTag>('tags').insertOne({_id: args[1].toLowerCase(), content: msg.content.slice(msg.content.indexOf(args[1]) + args[1].length).trim()});
+  await msg._client.mango.collection<DatabaseTag>('tags').insertOne({_id: args[1].toLowerCase(), content: msg.content.split(' ').slice(3).join(' ') });
   msg.channel.createMessage(`Created tag: ${args[1].toLowerCase()}`);
 }
 
@@ -35,11 +35,15 @@ async function editTag(msg: Message<GuildTextableChannel>, args: string[]): Prom
     return;
   }
 
-  await msg._client.mango.collection<DatabaseTag>('tags').updateOne({_id: args[1].toLowerCase}, {$set: {content: msg.content.slice(msg.content.indexOf(args[1]) + args[1].length).trim() }});
+  await msg._client.mango.collection<DatabaseTag>('tags').updateOne({_id: args[1].toLowerCase}, {$set: {content: msg.content.split(' ').slice(3).join(' ') }}); //msg.content.slice(msg.content.indexOf(args[1]) + args[1].length).trim() }});
   msg.channel.createMessage(`Tag \`${args[1].toLowerCase()}\` has been updated.`);
 }
 
 async function deleteTag(msg: Message<GuildTextableChannel>, args: string[]): Promise<void> {
+  if(!args[1]) {
+    msg.channel.createMessage('Include a tag silly goose');
+    return;
+  }
   if(!await msg._client.mango.collection<DatabaseTag>('tags').findOne({_id: args[1].toLowerCase()})) {
     msg.channel.createMessage(`Tag \`${args[1].toLowerCase()}\` does not exist!`);
     return;
