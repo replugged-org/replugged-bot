@@ -7,6 +7,7 @@ import type {
   User,
   TextChannel
 } from 'eris';
+import { IDS } from '../constants.js';
 
 type PossiblyUncachedMessage = Message<GuildTextableChannel> | { channel: TextableChannel | { id: string; guild: { id: string } }; guildID: string; id: string };
 type MessageLike = { id: string; author: User; channel: { name: string }; content: string };
@@ -38,7 +39,7 @@ async function store(msg: MessageLike, type: 'edit' | 'delete') {
 function processEdit(msg: Message<GuildTextableChannel>, old: OldMessage | null) {
   if (!old || 
     !msg.author || 
-    msg.channel.guild.id !== process.env['SERVER_ID'] || 
+    msg.channel.guild.id !== IDS.server || 
     msg.author.bot || msg.content === old.content || 
     isPrivate(msg.channel as TextChannel /* There is no reason for this to not be a text channel */)
   ) {
@@ -51,7 +52,7 @@ function processEdit(msg: Message<GuildTextableChannel>, old: OldMessage | null)
 
 function processDelete(msg: PossiblyUncachedMessage) {
   if (!('author' in msg) || 
-  msg.channel.guild.id !== process.env['SERVER_ID'] || 
+  msg.channel.guild.id !== IDS.server || 
   msg.author.bot || 
   isPrivate(msg.channel as TextChannel /* There is no reason for this to not be a text channel */) || 
   skipSnipe.has(msg.id)
