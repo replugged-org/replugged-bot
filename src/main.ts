@@ -10,7 +10,8 @@ const bot = new CommandClient(
   // if it's undefined you're bad.
   process.env['DISCORD_TOKEN']!,
   {
-    intents: ['guilds', 'guildBans', 'guildMembers', 'guildPresences', 'guildMessages', 'guildMessageReactions', 'guildInvites']
+    intents: ['guilds', 'guildBans', 'guildMembers', 'guildPresences', 'guildMessages', 'guildMessageReactions', 'guildInvites'],
+    restMode: true
   },
   { 
     defaultHelpCommand: false,
