@@ -1,4 +1,15 @@
-export const IDS = {
+export const IDS: {
+  server: string,
+  channels: {
+    [key: string]: string
+  },
+  roles: {
+    [key: string]: string
+  },
+  flagRoles: {
+    [key in UserFlagKeys | '_']?: string
+  }
+} = {
   server: '1000926524452647132',
   channels: {
     welcome: '1000955951500759130',
@@ -8,6 +19,14 @@ export const IDS = {
   },
   roles: {
     forg: '1001323983171489792'
+  },
+  flagRoles: {
+    CONTRIBUTOR: '1000955919141703690',
+    SERVER_BOOSTER: '1001124337002229842',
+    TRANSLATOR: '1000955920009928764',
+    BUG_HUNTER: '1000955924430717018',
+    EARLY_USER: '1003068171625959434',
+    _: '1000955925542207538'
   }
 };
 
