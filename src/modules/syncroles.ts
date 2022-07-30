@@ -2,7 +2,7 @@ import { CommandClient, Member } from 'eris';
 import { Collection } from 'mongodb';
 import { IDS, UserFlagKeys, UserFlags } from '../constants.js';
 import { User } from '../db';
-const flagRoles = IDS.roles;
+const flagRoles = IDS.flagRoles;
 
 // Give role in server if user has flag in DB
 const SYNC_DB_TO_SERVER: (UserFlagKeys | '_')[] = ['CONTRIBUTOR', 'TRANSLATOR', 'TRANSLATOR', 'BUG_HUNTER', 'EARLY_USER', '_'];
@@ -35,9 +35,9 @@ async function findUser(collection: Collection<User>, id: string) {
 async function processUpdates(collection: Collection<User>, member: Member) {
   const user = await findUser(collection, member.id);
   if (!user) return;
-  const flagsToAdd = SYNC_SERVER_TO_DB.filter(x => member.roles.includes(flagRoles[x])).reduce((acc, cur) => acc | UserFlags[cur], 0);
-  const flagsToRemove = SYNC_SERVER_TO_DB.filter(x => !member.roles.includes(flagRoles[x])).reduce((acc, cur) => acc | UserFlags[cur], 0);
-  const newFlags = user.flags | flagsToAdd & ~flagsToRemove;
+  const flagsToAdd = SYNC_SERVER_TO_DB.filter(x => member.roles.includes(flagRoles[x]!)).reduce((acc, cur) => acc | UserFlags[cur], 0);
+  const flagsToRemove = SYNC_SERVER_TO_DB.filter(x => !member.roles.includes(flagRoles[x]!)).reduce((acc, cur) => acc | UserFlags[cur], 0);
+  const newFlags = (user.flags | flagsToAdd) & ~flagsToRemove;
   if (newFlags !== user.flags) upsertUser(collection, member.id, { flags: newFlags });
 }
 
@@ -48,7 +48,7 @@ export default async function (client: CommandClient) {
     const user = await findUser(collection, member.id);
     if (!user) return;
     const rolesToAdd = SYNC_DB_TO_SERVER.filter(x => x === '_' || user.flags & UserFlags[x]);
-    rolesToAdd.forEach(role => member.addRole(flagRoles[role]));
+    rolesToAdd.forEach(role => member.addRole(flagRoles[role]!));
   });
 
   client.on('guildMemberUpdate', (_, member) => {
