@@ -1,4 +1,4 @@
-import { ComponentInteraction, Constants, Interaction } from 'eris';
+import { Client, ComponentInteraction, Constants, Interaction, Message } from 'eris';
 import EventEmitter from 'events';
 import { readdir, stat } from 'fs/promises';
 import { URL } from 'url';
@@ -27,13 +27,14 @@ export function isComponentInteraction(interaction: Interaction): interaction is
   return interaction.type === Constants.InteractionTypes.MESSAGE_COMPONENT;
 }
 
-export declare interface InteractionAwaiter {
+export declare interface InteractionCollector {
   on(event: 'interaction', handler: (interaction: ComponentInteraction) => unknown): this,
   on(event: 'end', handler: () => unknown): this,
   on(event: string, handler: Function): this
 }
 
-export class InteractionAwaiter extends EventEmitter {
+export class InteractionCollector extends EventEmitter {
+  private client: Client;
   private msgId: string;
   private timeout: number = 10000;
   private resetOnInteract: boolean = true;
@@ -42,7 +43,7 @@ export class InteractionAwaiter extends EventEmitter {
   private collected: number = 0;
   private runningTimeout?: NodeJS.Timeout;
 
-  constructor(msgId: string, {
+  constructor(message: Message, {
     timeout,
     resetOnInteract,
     max
@@ -52,12 +53,15 @@ export class InteractionAwaiter extends EventEmitter {
     max?: number | undefined
   } = {}) {
     super();
-    this.msgId = msgId;
+    
+    this.msgId = message.id;
+    this.client = message._client;
+
     if (timeout !== undefined) this.timeout = timeout;
     if (resetOnInteract !== undefined) this.resetOnInteract = resetOnInteract;
     if (max !== undefined) this.max = max;
 
-    this.on('interactionCreate', this.handleInteraction);
+    this.client.on('interactionCreate', (interaction) => this.handleInteraction(interaction));
     this.resetTimeout();
   }
 
@@ -73,14 +77,14 @@ export class InteractionAwaiter extends EventEmitter {
   }
 
   public end() {
-    this.off('interactionCreate', this.handleInteraction);
+    this.client.off('interactionCreate', (interaction) => this.handleInteraction(interaction));
     this.emit('end');
-    clearTimeout(this.runningTimeout);
+    if (this.runningTimeout) clearTimeout(this.runningTimeout);
   }
 
   public resetTimeout() {
-    clearTimeout(this.runningTimeout);
-    this.runningTimeout = setTimeout(this.end, this.timeout);
+    if (this.runningTimeout) clearTimeout(this.runningTimeout);
+    this.runningTimeout = setTimeout(() => this.end(), this.timeout);
   }
 
   public waitForEnd(): Promise<void> {
