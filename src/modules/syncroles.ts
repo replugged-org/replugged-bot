@@ -1,4 +1,4 @@
-import { CommandClient, Member } from 'eris';
+import { CommandClient } from 'eris';
 import { Collection } from 'mongodb';
 import { IDS, UserFlagKeys, UserFlags } from '../constants.js';
 import { User } from '../db';
@@ -32,23 +32,6 @@ async function findUser(collection: Collection<User>, id: string) {
   return user;
 }
 
-async function processUpdates(collection: Collection<User>, member: Member) {
-  const user = await findUser(collection, member.id);
-  const flagsToAdd = SYNC_SERVER_TO_DB.filter(x => member.roles.includes(flagRoles[x]!)).reduce((acc, cur) => acc | UserFlags[cur], 0);
-  const flagsToRemove = SYNC_SERVER_TO_DB.filter(x => !member.roles.includes(flagRoles[x]!)).reduce((acc, cur) => acc | UserFlags[cur], 0);
-  if (!user) {
-    if (flagsToAdd) await upsertUser(collection, member.id, {
-      username: member.username,
-      discriminator: member.discriminator,
-      avatar: member.avatar,
-      flags: flagsToAdd,
-    });
-    return;
-  }
-  const newFlags = (user.flags | flagsToAdd) & ~flagsToRemove;
-  if (newFlags !== user.flags) upsertUser(collection, member.id, { flags: newFlags });
-}
-
 export default async function (client: CommandClient) {
   const collection = client.mango.collection<User>('users');
 
@@ -59,11 +42,30 @@ export default async function (client: CommandClient) {
     rolesToAdd.forEach(role => member.addRole(flagRoles[role]!));
   });
 
-  client.on('guildMemberUpdate', (_, member) => {
-    processUpdates(collection, member);
+  client.on('guildMemberUpdate', async (_, member) => {
+    if (!member) return;
+    const user = await findUser(collection, member.id);
+    const flagsToAdd = SYNC_SERVER_TO_DB.filter(x => member.roles.includes(flagRoles[x]!)).reduce((acc, cur) => acc | UserFlags[cur], 0);
+    const flagsToRemove = SYNC_SERVER_TO_DB.filter(x => !member.roles.includes(flagRoles[x]!)).reduce((acc, cur) => acc | UserFlags[cur], 0);
+    if (!user) {
+      if (flagsToAdd) await upsertUser(collection, member.id, {
+        username: member.username,
+        discriminator: member.discriminator,
+        avatar: member.avatar,
+        flags: flagsToAdd,
+      });
+      return;
+    }
+    const newFlags = (user.flags | flagsToAdd) & ~flagsToRemove;
+    if (newFlags !== user.flags) upsertUser(collection, member.id, { flags: newFlags });  
   });
-  client.on('messageCreate', ({member}) => {
-    if (member) processUpdates(collection, member);
+
+  client.on('messageCreate', async ({member}) => {
+    if (!member) return;
+    const user = await findUser(collection, member.id);
+    if (!user) return;
+    const rolesToAdd = SYNC_DB_TO_SERVER.filter(x => x === '_' || user.flags & UserFlags[x]);
+    rolesToAdd.forEach(role => member.addRole(flagRoles[role]!));
   });
 
   client.on('guildMemberRemove', async (_, member) => {
