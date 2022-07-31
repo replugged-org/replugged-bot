@@ -34,9 +34,17 @@ async function findUser(collection: Collection<User>, id: string) {
 
 async function processUpdates(collection: Collection<User>, member: Member) {
   const user = await findUser(collection, member.id);
-  if (!user) return;
   const flagsToAdd = SYNC_SERVER_TO_DB.filter(x => member.roles.includes(flagRoles[x]!)).reduce((acc, cur) => acc | UserFlags[cur], 0);
   const flagsToRemove = SYNC_SERVER_TO_DB.filter(x => !member.roles.includes(flagRoles[x]!)).reduce((acc, cur) => acc | UserFlags[cur], 0);
+  if (!user) {
+    if (flagsToAdd) await upsertUser(collection, member.id, {
+      username: member.username,
+      discriminator: member.discriminator,
+      avatar: member.avatar,
+      flags: flagsToAdd,
+    });
+    return;
+  }
   const newFlags = (user.flags | flagsToAdd) & ~flagsToRemove;
   if (newFlags !== user.flags) upsertUser(collection, member.id, { flags: newFlags });
 }
