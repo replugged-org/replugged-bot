@@ -1,5 +1,7 @@
 import type { GuildTextableChannel, Message } from 'eris';
+import { UserFlags } from '../constants';
 import type { DatabaseTag } from '../db';
+import { User as DBUser } from '../db.js';
 
 async function listTags (msg: Message<GuildTextableChannel>): Promise<void> {
   const tags: DatabaseTag[] = await msg._client.mango.collection<DatabaseTag>('tags').find({}).toArray();
@@ -67,10 +69,12 @@ export const description = 'Custom commands';
 
 const BOAT_PREFIX = process.env['PREFIX'];
 
-export function executor(msg: Message<GuildTextableChannel>, args: string[]): void {
+export async function executor(msg: Message<GuildTextableChannel>, args: string[]) {
   if(!msg.member) return;
 
-  const elevated = msg.member.permissions.has('manageMessages');
+  const dbCollection = msg._client.mango.collection<DBUser>('users');
+  const dbAuthor = await dbCollection.findOne({_id: msg.author.id});
+  const elevated = dbAuthor && ((dbAuthor.flags & UserFlags.STAFF) === UserFlags.STAFF);
 
   if(args.length === 0) {
     const parts = [
@@ -96,15 +100,15 @@ export function executor(msg: Message<GuildTextableChannel>, args: string[]): vo
       listTags(msg);
       break;
     case 'add':
-      if(!elevated) return void msg.channel.createMessage('no');
+      if(!elevated) return void msg.channel.createMessage('nope');
       addTag(msg, args);
       break;
     case 'edit':
-      if(!elevated) return void msg.channel.createMessage('no');
+      if(!elevated) return void msg.channel.createMessage('nope');
       editTag(msg, args);
       break;
     case 'delete':
-      if(!elevated) return void msg.channel.createMessage('no');
+      if(!elevated) return void msg.channel.createMessage('nope');
       deleteTag(msg, args);
       break;
     default:
