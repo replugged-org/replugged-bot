@@ -4,7 +4,7 @@ import { UserFlagKeys, UserFlags, UserFlagsArray, UserFlagsValues } from '../con
 import { User as DBUser } from '../db.js';
 import { InteractionCollector } from '../util.js';
 
-export const description = 'Forg';
+export const description = 'Nope';
 
 async function upsertUser(collection: Collection<DBUser>, id: string, data: Partial<DBUser>) {
   const res = await collection.findOneAndUpdate(
