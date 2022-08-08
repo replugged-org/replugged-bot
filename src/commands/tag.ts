@@ -1,7 +1,6 @@
 import type { GuildTextableChannel, Message } from 'eris';
-import { UserFlags } from '../constants';
-import type { DatabaseTag } from '../db';
-import { User as DBUser } from '../db.js';
+import type { DatabaseTag, User as DBUser } from '../db.js';
+import { UserFlags } from '../constants.js';
 
 async function listTags (msg: Message<GuildTextableChannel>): Promise<void> {
   const tags: DatabaseTag[] = await msg._client.mango.collection<DatabaseTag>('tags').find({}).toArray();
