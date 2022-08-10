@@ -15,13 +15,16 @@ export async function executor(msg: Message<GuildTextableChannel>, args: string[
   try {
     const res = await eval(args.join(' '));
     if (res) {
+      msg.addReaction('✅');
       const str = inspect(res, { depth: 2 });
-	  channel.createMessage(`\`\`\`js\n${str}\n\`\`\``).catch(() => {
+      if (str === 'undefined') return;
+      channel.createMessage(`\`\`\`js\n${str}\n\`\`\``).catch(() => {
         channel.createMessage('Could not send result.');
-	  });
+      });
     }
   }
   catch (e) {
+    msg.addReaction('⚠️');
     return channel.createMessage(`Error: ${e}`);
   }
 }
