@@ -6,7 +6,7 @@ export async function executor(msg: Message<GuildTextableChannel>) {
   if (!(msg.channel instanceof ThreadChannel)) return msg.channel.createMessage('This can only be used in a thread.');
   const channel = msg.channel as ThreadChannel; // Since Eris is not properly typed
 
-  if (!channel.permissionsOf(msg.member).has(Constants.Permissions.manageThreads) && channel.ownerID === msg.member.id) return channel.createMessage('nope');
+  if (!channel.permissionsOf(msg.member).has(Constants.Permissions.manageThreads) && channel.ownerID !== msg.member.id) return channel.createMessage('nope');
   
   await msg.delete();
   await channel.edit({archived: true});
