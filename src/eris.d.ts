@@ -1,4 +1,4 @@
-import type { Db } from 'mongodb'
+import type { Db } from 'mongodb';
 
 declare module 'eris' {
   interface CommandClient {
