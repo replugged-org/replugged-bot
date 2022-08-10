@@ -8,7 +8,6 @@ export async function executor(msg: Message<GuildTextableChannel>) {
 
   if (!channel.permissionsOf(msg.member).has(Constants.Permissions.manageThreads) && channel.ownerID === msg.member.id) return channel.createMessage('nope');
   
+  await msg.delete();
   await channel.edit({archived: true});
-  await msg.addReaction('✅');
-  setTimeout(() => msg.delete(), 5000);
 }
