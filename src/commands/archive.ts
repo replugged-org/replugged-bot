@@ -10,5 +10,5 @@ export async function executor(msg: Message<GuildTextableChannel>) {
   
   await channel.edit({archived: true});
   await msg.addReaction('✅');
-  setTimeout(msg.delete(), 5000);
+  setTimeout(() => msg.delete(), 5000);
 }
