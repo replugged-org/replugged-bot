@@ -9,10 +9,10 @@ export function executor(msg: Message<GuildTextableChannel>): void {
 
 
   if(msg.member.roles.includes(IDS.roles.forg)) {
-    msg.channel.createMessage('nice try lmao');
+    msg.channel.createMessage('forg is eternal <:forg:1004880213081075772>');
   }
   else {
     msg.member.addRole(IDS.roles.forg);
-    msg.channel.createMessage('get forg\'d lol');
+    msg.channel.createMessage('<:forg1:1004880422980817056><:forg2:1004880423790334042><:forg3:1004880424624980111><:forg4:1004880426541793310><:forg5:1004880427552624650>');
   }
 }
