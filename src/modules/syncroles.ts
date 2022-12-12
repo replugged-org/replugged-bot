@@ -52,6 +52,8 @@ export default async function (client: CommandClient) {
   const collection = client.mango.collection<User>('users');
 
   client.on('guildMemberAdd', async (_, member: Member) => {
+    if (member.pending) return;
+
     const user = await findUser(collection, member.id);
     // If no user or ghost user just ignore it;
     if (!user || user.flags & UserFlags['GHOST']) return;
@@ -64,6 +66,8 @@ export default async function (client: CommandClient) {
 
   client.on('guildMemberUpdate', async (_, member) => {
     if (!member) return;
+    if (member.pending) return;
+
     const user = await findUser(collection, member.id);
     // do nothing;
     if(!user || user.flags & UserFlags['GHOST']) return;
@@ -88,6 +92,8 @@ export default async function (client: CommandClient) {
 
   client.on('messageCreate', async ({ member }) => {
     if (!member) return;
+    if (member.pending) return;
+
     const user = await findUser(collection, member.id);
     if (!user || user.flags & UserFlags['GHOST']) return;
     const rolesToAdd = SYNC_DB_TO_SERVER.filter(
