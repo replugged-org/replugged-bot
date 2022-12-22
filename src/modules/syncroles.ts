@@ -53,6 +53,7 @@ export default async function (client: CommandClient) {
 
   client.on('guildMemberAdd', async (_, member: Member) => {
     if (member.pending) return;
+    if (member.user.bot) return;
 
     const user = await findUser(collection, member.id);
     // If no user or ghost user just ignore it;
@@ -67,6 +68,7 @@ export default async function (client: CommandClient) {
   client.on('guildMemberUpdate', async (_, member) => {
     if (!member) return;
     if (member.pending) return;
+    if (member.user.bot) return;
 
     const user = await findUser(collection, member.id);
     // do nothing;
@@ -93,6 +95,7 @@ export default async function (client: CommandClient) {
   client.on('messageCreate', async ({ member }) => {
     if (!member) return;
     if (member.pending) return;
+    if (member.user.bot) return;
 
     const user = await findUser(collection, member.id);
     if (!user || user.flags & UserFlags['GHOST']) return;
@@ -103,6 +106,8 @@ export default async function (client: CommandClient) {
   });
 
   client.on('guildMemberRemove', async (_, member) => {
+    if (member.user.bot) return;
+
     const user = await findUser(collection, member.id);
     if (!user || user.flags & UserFlags['GHOST']) return;
     const newFlags =
