@@ -1,37 +1,37 @@
 export const IDS: {
-  server: string,
+  server: string;
   channels: {
-    [key: string]: string
-  },
+    [key: string]: string;
+  };
   roles: {
-    [key: string]: string
-  },
+    [key: string]: string;
+  };
   flagRoles: {
-    [key in UserFlagKeys | '_']?: string
-  }
+    [key in UserFlagKeys | "_"]?: string;
+  };
 } = {
-  server: '1018655358119587881',
+  server: "1018655358119587881",
   channels: {
-    welcome: '1018655358614515776',
-    rules: '1018655358614515775',
-    faq: '1018655358614515777',
-    starboard: '1018655359038148635'
+    welcome: "1018655358614515776",
+    rules: "1018655358614515775",
+    faq: "1018655358614515777",
+    starboard: "1018655359038148635",
   },
   roles: {
-    forg: '1018655358165733508'
+    forg: "1018655358165733508",
   },
   flagRoles: {
-    CONTRIBUTOR: '1018655358140551173',
-    SERVER_BOOSTER: '1018655358140551175',
-    TRANSLATOR: '1018655358140551172',
-    BUG_HUNTER: '1018655358119587888',
-    EARLY_USER: '1018655358119587886',
-    _: '1018655358119587885'
-  }
+    CONTRIBUTOR: "1018655358140551173",
+    SERVER_BOOSTER: "1018655358140551175",
+    TRANSLATOR: "1018655358140551172",
+    BUG_HUNTER: "1018655358119587888",
+    EARLY_USER: "1018655358119587886",
+    _: "1018655358119587885",
+  },
 };
 
 export const MESSAGES = {
-  welcome: 'Hello %user and welcome to Replugged! Please make sure to read %rules and %faq.'
+  welcome: "Hello %user and welcome to Replugged! Please make sure to read %rules and %faq.",
 };
 
 // Visibility:
@@ -104,45 +104,45 @@ export const UserFlags = {
 };
 
 export type UserFlagKeys = keyof typeof UserFlags;
-export type UserFlagsValues = typeof UserFlags[UserFlagKeys];
+export type UserFlagsValues = (typeof UserFlags)[UserFlagKeys];
 
-export const UserFlagsText: {[k: UserFlagsValues]: string} = {
-  [UserFlags.DEVELOPER]: 'Developer',
-  [UserFlags.ADMIN]: 'Admin',
-  [UserFlags.STAFF]: 'Staff',
-  [UserFlags.MODERATOR]: 'Moderator',
-  [UserFlags.SUPPORT]: 'Support',
-  [UserFlags.CONTRIBUTOR]: 'Contributor',
-  [UserFlags.TRANSLATOR]: 'Translator',
-  [UserFlags.BUG_HUNTER]: 'Bug Hunter',
-  [UserFlags.EARLY_USER]: 'Early User',
-  [UserFlags.HAS_DONATED]: 'Has Donated',
-  [UserFlags.IS_CUTIE]: 'Cutie',
-  [UserFlags.CUTIE_OVERRIDE]: 'Cutie Override',
-  [UserFlags.STORE_PUBLISHER]: 'Store Publisher',
-  [UserFlags.VERIFIED_PUBLISHER]: 'Verified Publisher',
-  [UserFlags.BANNED]: 'Banned',
-  [UserFlags.BANNED_PUBLISHER]: 'Banned Publisher',
-  [UserFlags.BANNED_VERIFICATION]: 'Banned Verification',
-  [UserFlags.BANNED_HOSTING]: 'Banned Hosting',
-  [UserFlags.BANNED_REPORTING]: 'Banned Reporting',
-  [UserFlags.BANNED_SYNC]: 'Banned Sync',
-  [UserFlags.BANNED_EVENTS]: 'Banned Events',
-  [UserFlags.APPEALED_SUPPORT]: 'Appealed Support',
-  [UserFlags.APPEALED_MUTE]: 'Appealed Mute',
-  [UserFlags.APPEALED_BAN]: 'Appealed Ban',
-  [UserFlags.APPEALED_SYNC]: 'Appealed Sync',
-  [UserFlags.APPEALED_EVENTS]: 'Appealed Events',
-  [UserFlags.GHOST]: 'Ghost',
-  [UserFlags.SERVER_BOOSTER]: 'Server Booster'
+export const UserFlagsText: { [k: UserFlagsValues]: string } = {
+  [UserFlags.DEVELOPER]: "Developer",
+  [UserFlags.ADMIN]: "Admin",
+  [UserFlags.STAFF]: "Staff",
+  [UserFlags.MODERATOR]: "Moderator",
+  [UserFlags.SUPPORT]: "Support",
+  [UserFlags.CONTRIBUTOR]: "Contributor",
+  [UserFlags.TRANSLATOR]: "Translator",
+  [UserFlags.BUG_HUNTER]: "Bug Hunter",
+  [UserFlags.EARLY_USER]: "Early User",
+  [UserFlags.HAS_DONATED]: "Has Donated",
+  [UserFlags.IS_CUTIE]: "Cutie",
+  [UserFlags.CUTIE_OVERRIDE]: "Cutie Override",
+  [UserFlags.STORE_PUBLISHER]: "Store Publisher",
+  [UserFlags.VERIFIED_PUBLISHER]: "Verified Publisher",
+  [UserFlags.BANNED]: "Banned",
+  [UserFlags.BANNED_PUBLISHER]: "Banned Publisher",
+  [UserFlags.BANNED_VERIFICATION]: "Banned Verification",
+  [UserFlags.BANNED_HOSTING]: "Banned Hosting",
+  [UserFlags.BANNED_REPORTING]: "Banned Reporting",
+  [UserFlags.BANNED_SYNC]: "Banned Sync",
+  [UserFlags.BANNED_EVENTS]: "Banned Events",
+  [UserFlags.APPEALED_SUPPORT]: "Appealed Support",
+  [UserFlags.APPEALED_MUTE]: "Appealed Mute",
+  [UserFlags.APPEALED_BAN]: "Appealed Ban",
+  [UserFlags.APPEALED_SYNC]: "Appealed Sync",
+  [UserFlags.APPEALED_EVENTS]: "Appealed Events",
+  [UserFlags.GHOST]: "Ghost",
+  [UserFlags.SERVER_BOOSTER]: "Server Booster",
 };
 
-export const UserFlagsArray: {
-  key: UserFlagKeys,
-  value: UserFlagsValues,
-  label: string
-}[] = Object.entries(UserFlags).map(([key, value]) => ({
+export const UserFlagsArray: Array<{
+  key: UserFlagKeys;
+  value: UserFlagsValues;
+  label: string;
+}> = Object.entries(UserFlags).map(([key, value]) => ({
   key: key as UserFlagKeys,
-  value: value as UserFlagsValues,
-  label: UserFlagsText[value as UserFlagsValues]
+  value,
+  label: UserFlagsText[value],
 }));

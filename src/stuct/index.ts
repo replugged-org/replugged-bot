@@ -1,4 +1,3 @@
-export * from './command';
-export * from './commanduse';
-export * from './slashcommanduse';
-export * from './buttonmenu';
+export * from "./command.js";
+export * from "./commanduse.js";
+export * from "./buttonmenu.js";

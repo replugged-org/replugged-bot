@@ -1,44 +1,44 @@
-export type DatabaseTag = {
-  _id: string,
-  content: string
-};
+export interface DatabaseTag {
+  _id: string;
+  content: string;
+}
 
-export type ExternalAccount = {
-  tokenType: string,
-  accessToken: string,
-  refreshToken: string,
+export interface ExternalAccount {
+  tokenType: string;
+  accessToken: string;
+  refreshToken: string;
   // todo: ditch unix
-  expiresAt: number,
-  name: string
-};
+  expiresAt: number;
+  name: string;
+}
 
-export type CutieStatus = {
-  pledgeTier: number,
+export interface CutieStatus {
+  pledgeTier: number;
   // todo: ditch unix
-  perksExpireAt: number,
+  perksExpireAt: number;
   // todo: ditch unix
-  lastManualRefresh?: number
-};
+  lastManualRefresh?: number;
+}
 
-export type CutiePerks = {
-  color: string | null,
-  badge: string | null,
-  title: string | null
-};
+export interface CutiePerks {
+  color: string | null;
+  badge: string | null;
+  title: string | null;
+}
 
-export type User = {
-  _id: string,
-  username: string,
-  discriminator: string,
-  avatar: string | null,
-  flags: number,
+export interface User {
+  _id: string;
+  username: string;
+  discriminator: string;
+  avatar: string | null;
+  flags: number;
   accounts: {
-    discord: Omit<ExternalAccount, 'name'>,
-    spotify?: ExternalAccount,
-    patreon?: ExternalAccount
-  },
-  cutieStatus?: CutieStatus,
-  cutiePerks?: CutiePerks,
-  createdAt: Date,
-  updatedAt?: Date
-};
+    discord: Omit<ExternalAccount, "name">;
+    spotify?: ExternalAccount;
+    patreon?: ExternalAccount;
+  };
+  cutieStatus?: CutieStatus;
+  cutiePerks?: CutiePerks;
+  createdAt: Date;
+  updatedAt?: Date;
+}

@@ -1,28 +1,35 @@
 {
-		"name": "replugged-bot",
-		"version": "1.0.0",
-		"main": "out/main.js",
-		"files": [
-				"src"
-		],
-		"scripts": {
-				"build": "tsc",
-				"test": "tsc && node .",
-				"lint": "eslint src",
-				"lint:fix": "eslint --fix src || true"
-		},
-		"type": "module",
-		"devDependencies": {
-				"@types/node": "^18.0.0",
-				"@types/ws": "^8.5.3",
-				"@typescript-eslint/eslint-plugin": "^5.30.0",
-				"@typescript-eslint/parser": "^5.54.1",
-				"eslint": "^8.35.0",
-				"typescript": "^4.7.4"
-		},
-		"dependencies": {
-				"discord.js": "^14.7.1",
-				"dotenv": "^16.0.1",
-				"mongodb": "^4.8.1"
-		}
+  "name": "replugged-bot",
+  "version": "1.0.0",
+  "main": "out/main.js",
+  "files": [
+    "src"
+  ],
+  "scripts": {
+    "build": "tsc",
+    "test": "tsc && node .",
+    "lint": "prettier ./src && eslint src",
+    "lint:fix": "prettier --write ./src && eslint --fix src"
+  },
+  "type": "module",
+  "devDependencies": {
+    "@types/lodash": "^4.14.191",
+    "@types/node": "^18.0.0",
+    "@types/ws": "^8.5.4",
+    "@typescript-eslint/eslint-plugin": "^5.30.0",
+    "@typescript-eslint/parser": "^5.54.1",
+    "eslint": "^8.35.0",
+    "eslint-config-dmitmel": "github:dmitmel/eslint-config-dmitmel",
+    "eslint-plugin-node": "^11.1.0",
+    "prettier": "^2.8.4",
+    "typescript": "^4.7.4"
+  },
+  "dependencies": {
+    "discord.js": "^14.8.0",
+    "dotenv": "^16.0.1",
+    "lodash": "^4.17.21"
+  },
+  "engines": {
+    "node": ">=16.0.0"
+  }
 }

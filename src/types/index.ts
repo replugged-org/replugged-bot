@@ -1,2 +1,2 @@
-export * from './command';
-export * from './discord';
+export * from "./command.js";
+export * from "./discord.js";
