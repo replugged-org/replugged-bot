@@ -9,20 +9,19 @@ import {
 } from "discord.js";
 import { fileURLToPath, pathToFileURL } from "url";
 import path from "path";
-const { join } = path;
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export async function load(
   client: CustomClient,
-  path: string,
+  filePath: string,
   subcommand: string | false,
   reload: string | boolean | null,
 ): Promise<void> {
   const dev = process.env.NODE_ENV == "development";
   const serverID = (dev && process.env.SERVER_ID) || undefined;
 
-  const commands = readdirSync(pathToFileURL(join(dirname, '/../commands', path)));
+  const commands = readdirSync(pathToFileURL(path.join(dirname, "../commands", filePath)));
   let slashCommands: SlashCommandData[] = [];
   let slashCommandSubcommands: Record<string, SlashCommandData> = {};
   for (let file of commands) {
@@ -38,7 +37,9 @@ export async function load(
             : `${subcommand}.${file.replace(".js", "")}`
           : file.replace(".js", "");
       if (file.endsWith(".js")) {
-        const loaded = await import(`${pathToFileURL(join(dirname, '/../commands', path, file)).href}?t=${Date.now()}`);
+        const loaded = await import(
+          `${pathToFileURL(path.join(dirname, "../commands", filePath, file)).href}?t=${Date.now()}`
+        );
         if (loaded?.default) {
           const cmd: Command = new loaded.default();
 
@@ -118,7 +119,7 @@ export async function load(
           }
         }
       } else if (!file.includes(".")) {
-        await load(client, `${path}/${file}`, name, reload == false ? false : null);
+        await load(client, `${filePath}/${file}`, name, reload == false ? false : null);
       }
     }
   }

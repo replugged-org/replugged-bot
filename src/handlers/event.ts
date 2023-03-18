@@ -6,7 +6,7 @@ import path from "path";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 export default async (client: CustomClient): Promise<void> => {
-  const events = readdirSync(`${dirname}/../events`).filter(
+  const events = readdirSync(path.join(dirname, "../events")).filter(
     (d) => d.endsWith(".js") || d.endsWith(".ts"),
   );
   for (let file of events) {
