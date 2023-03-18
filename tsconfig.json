@@ -9,7 +9,9 @@
     "noImplicitAny": true,
     "strict": true,
     "target": "ES2020",
-    "useDefineForClassFields": true
+    "useDefineForClassFields": true,
+    "incremental": true,
+    "sourceMap": true
   },
   "include": ["src"]
 }

@@ -6,14 +6,15 @@
     "src"
   ],
   "scripts": {
+    "start": "node .",
     "build": "tsc",
+    "watch": "tsc -w",
     "test": "tsc && node .",
     "lint": "prettier ./src && eslint src",
     "lint:fix": "prettier --write ./src && eslint --fix src"
   },
   "type": "module",
   "devDependencies": {
-    "@types/lodash": "^4.14.191",
     "@types/node": "^18.0.0",
     "@types/ws": "^8.5.4",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
@@ -25,9 +26,10 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
+    "@types/lodash-es": "^4.17.7",
     "discord.js": "^14.8.0",
     "dotenv": "^16.0.1",
-    "lodash": "^4.17.21"
+    "lodash-es": "^4.17.21"
   },
   "engines": {
     "node": ">=16.0.0"
