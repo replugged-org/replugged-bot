@@ -15,6 +15,7 @@
   },
   "type": "module",
   "devDependencies": {
+    "@types/lodash-es": "^4.17.7",
     "@types/node": "^18.0.0",
     "@types/ws": "^8.5.4",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
@@ -26,7 +27,6 @@
     "typescript": "^4.7.4"
   },
   "dependencies": {
-    "@types/lodash-es": "^4.17.7",
     "discord.js": "^14.8.0",
     "dotenv": "^16.0.1",
     "lodash-es": "^4.17.21"
