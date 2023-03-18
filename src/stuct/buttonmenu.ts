@@ -6,7 +6,7 @@ type ComponentsType =
   | Array<Discord.ActionRow<Discord.MessageActionRowComponent>>
   | Array<Discord.ActionRowBuilder<Discord.MessageActionRowComponentBuilder>>;
 
-interface MessageEditOptions extends Discord.MessageEditOptions {
+export interface BaseMessageOptions extends Discord.BaseMessageOptions {
   components?: ComponentsType;
 }
 
@@ -14,7 +14,7 @@ export class ButtonMenu extends EventEmitter {
   private message: Discord.Message;
   private collector: Discord.InteractionCollector<Discord.CollectedMessageInteraction>;
   public page = 1;
-  public pages = new Discord.Collection<number, MessageEditOptions>();
+  public pages = new Discord.Collection<number, BaseMessageOptions>();
   public ended = false;
   public endAction: ButtonMenuEndAction = "DISABLE_BUTTONS";
   public resendButtonCustomLabel: string | undefined;
@@ -71,7 +71,7 @@ export class ButtonMenu extends EventEmitter {
     this.collector.on("end", async () => {
       this.ended = true;
       if (this.endAction !== "NONE" && (await this.fetchMessage())) {
-        const newMessage: MessageEditOptions = {
+        const newMessage: BaseMessageOptions = {
           components: this.message.components,
         };
 
@@ -165,7 +165,7 @@ export class ButtonMenu extends EventEmitter {
       return;
     }
 
-    const newMessage: MessageEditOptions = {
+    const newMessage: BaseMessageOptions = {
       content: this.message.content,
       embeds: this.message.embeds,
       components: this.message.components,
@@ -203,17 +203,19 @@ export class ButtonMenu extends EventEmitter {
       row.components.forEach((component, i) => {
         if (component.data.type !== Discord.ComponentType.Button) return;
         if (component.data.style === Discord.ButtonStyle.Link) return;
-        if (!("customId" in component.data)) return;
+        const typedComponent =
+          component as Discord.ComponentBuilder<Discord.APIButtonComponentWithCustomId>;
+
+        // eslint-disable-next-line @typescript-eslint/naming-convention
+        const { custom_id } = typedComponent.data;
+        if (typeof custom_id !== "string") return;
 
         const builder = new Discord.ButtonBuilder(component.data);
-        if (!("customId" in builder.data)) return;
-        const { customId } = builder.data;
-        if (typeof customId !== "string") return;
 
-        if (customId === "previous") builder.setDisabled(!hasPrevious);
-        if (customId === "next") builder.setDisabled(!hasNext);
-        if (customId.startsWith("page-")) {
-          const btnPage = customId.slice(5);
+        if (custom_id === "previous") builder.setDisabled(!hasPrevious);
+        if (custom_id === "next") builder.setDisabled(!hasNext);
+        if (custom_id.startsWith("page-")) {
+          const btnPage = custom_id.slice(5);
           builder.setDisabled(parseInt(btnPage, 10) == page);
         }
 

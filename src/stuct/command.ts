@@ -85,5 +85,5 @@ export abstract class Command {
     }, cooldown);
   }
 
-  public abstract run(command: CommandUse<Record<string, unknown>>): Promise<void>;
+  public abstract run(command: CommandUse<never>): Promise<void>;
 }

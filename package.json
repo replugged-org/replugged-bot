@@ -6,7 +6,8 @@
     "src"
   ],
   "scripts": {
-    "start": "node .",
+    "start": "cross-env NODE_ENV=development node --enable-source-maps .",
+    "start:prod": "cross-env NODE_ENV=production node --enable-source-maps .",
     "build": "tsc",
     "watch": "tsc -w",
     "test": "tsc && node .",
@@ -20,6 +21,7 @@
     "@types/ws": "^8.5.4",
     "@typescript-eslint/eslint-plugin": "^5.30.0",
     "@typescript-eslint/parser": "^5.54.1",
+    "cross-env": "^7.0.3",
     "eslint": "^8.35.0",
     "eslint-config-dmitmel": "github:dmitmel/eslint-config-dmitmel",
     "eslint-plugin-node": "^11.1.0",

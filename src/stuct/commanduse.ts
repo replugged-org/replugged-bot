@@ -7,7 +7,7 @@ import {
   CustomClient,
 } from "../types/index.js";
 import { Command } from "./command.js";
-import { ButtonMenu } from "./index.js";
+import { BaseMessageOptions, ButtonMenu } from "./index.js";
 import { idsToSnowflakes } from "../helpers.js";
 import { compact } from "lodash-es";
 import { PermissionFlagsBits } from "discord.js";
@@ -118,9 +118,11 @@ export class CommandUse<Args> {
   }
 
   public async sendMessage(
-    payload: Discord.InteractionReplyOptions,
+    payload: string | Discord.InteractionReplyOptions,
     options: CommandResponseOptions = {},
   ): Promise<Discord.Message | null> {
+    if (typeof payload === "string") payload = { content: payload };
+
     const calculatedOptions = {
       reply: true,
       replyPing: false,
@@ -229,7 +231,7 @@ export class CommandUse<Args> {
           await this.editHelp(cmd, interaction);
         }
       }
-      if (interaction.isSelectMenu()) {
+      if (interaction.isStringSelectMenu()) {
         if (interaction.customId == "command") {
           const cmd = interaction.values[0];
           await this.editHelp(cmd.replace(/ /g, "."), interaction);
@@ -274,7 +276,7 @@ export class CommandUse<Args> {
   public generateCommandEmbed(
     cmdHelp: CommandHelp = this.command.help,
     inMenu = false,
-  ): Discord.BaseMessageOptions {
+  ): BaseMessageOptions {
     const commandName = cmdHelp.name.replace(/\./g, " ");
 
     const title = [

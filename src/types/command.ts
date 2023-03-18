@@ -1,10 +1,10 @@
 import * as Discord from "discord.js";
-import { Command } from "../stuct/index.js";
+import { BaseMessageOptions, Command } from "../stuct/index.js";
 import { CustomClient } from "./discord.js";
 
 export interface CommandInput {
   message: Discord.Message;
-  args: { [key: string]: string };
+  args: Record<string, string>;
   author: Discord.User | Discord.PartialUser;
   member: Discord.GuildMember | null;
   client: CustomClient;
@@ -68,7 +68,7 @@ export type CommandFlags = "dev" | "support" | "admin";
 
 export interface CanUse {
   canUse: boolean;
-  responseMessage: Discord.BaseMessageOptions | null;
+  responseMessage: BaseMessageOptions | null;
 }
 
 export interface CommandPermissions {

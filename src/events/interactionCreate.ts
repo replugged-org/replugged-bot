@@ -67,8 +67,10 @@ export default async (client: CustomClient, interaction: Discord.Interaction): P
     }
 
     try {
+      // @ts-expect-error Doesn't like that the default parameter is never
       await commandFile.run(commandUse);
-    } catch {
+    } catch (e) {
+      console.error(`An error occurred while running ${name}`, e);
       await commandUse.sendMessage(
         {
           content: `An error occurred, please try again later.`,

@@ -1,14 +1,8 @@
 export const IDS: {
   server: string;
-  channels: {
-    [key: string]: string;
-  };
-  roles: {
-    [key: string]: string;
-  };
-  flagRoles: {
-    [key in UserFlagKeys | "_"]?: string;
-  };
+  channels: Partial<Record<string, string>>;
+  roles: Partial<Record<string, string>>;
+  flagRoles: Partial<Record<UserFlagKeys | "_", string>>;
 } = {
   server: "1018655358119587881",
   channels: {
@@ -106,7 +100,7 @@ export const UserFlags = {
 export type UserFlagKeys = keyof typeof UserFlags;
 export type UserFlagsValues = (typeof UserFlags)[UserFlagKeys];
 
-export const UserFlagsText: { [k: UserFlagsValues]: string } = {
+export const UserFlagsText: Record<UserFlagsValues, string> = {
   [UserFlags.DEVELOPER]: "Developer",
   [UserFlags.ADMIN]: "Admin",
   [UserFlags.STAFF]: "Staff",

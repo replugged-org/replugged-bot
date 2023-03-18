@@ -8,9 +8,6 @@ import {
   ChatInputApplicationCommandData,
 } from "discord.js";
 
-const dev = process.env.NODE_ENV == "development";
-const serverID = (dev && process.env.SERVER_ID) || undefined;
-
 const dirname = new URL(".", import.meta.url).pathname;
 
 export async function load(
@@ -19,9 +16,12 @@ export async function load(
   subcommand: string | false,
   reload: string | boolean | null,
 ): Promise<void> {
+  const dev = process.env.NODE_ENV == "development";
+  const serverID = (dev && process.env.SERVER_ID) || undefined;
+
   const commands = readdirSync(`${dirname}../commands/${path}`);
   let slashCommands: SlashCommandData[] = [];
-  let slashCommandSubcommands: { [key: string]: SlashCommandData } = {};
+  let slashCommandSubcommands: Record<string, SlashCommandData> = {};
   for (let file of commands) {
     if (
       reload == false ||
