@@ -1,6 +1,6 @@
 import { CustomClient } from "../types/index.js";
 import * as Discord from "discord.js";
-import { isEqual } from "lodash";
+import { isEqual } from "lodash-es";
 
 function commandToData(
   command: Discord.ApplicationCommand | Discord.ApplicationCommandData,

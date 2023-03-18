@@ -11,13 +11,15 @@ import {
 const dev = process.env.NODE_ENV == "development";
 const serverID = (dev && process.env.SERVER_ID) || undefined;
 
+const dirname = new URL(".", import.meta.url).pathname;
+
 export async function load(
   client: CustomClient,
   path: string,
   subcommand: string | false,
   reload: string | boolean | null,
 ): Promise<void> {
-  const commands = readdirSync(`${__dirname}/../commands/${path}`);
+  const commands = readdirSync(`${dirname}../commands/${path}`);
   let slashCommands: SlashCommandData[] = [];
   let slashCommandSubcommands: { [key: string]: SlashCommandData } = {};
   for (let file of commands) {
@@ -33,12 +35,7 @@ export async function load(
             : `${subcommand}.${file.replace(".js", "")}`
           : file.replace(".js", "");
       if (file.endsWith(".js")) {
-        if (reload) {
-          if (client.commands?.has(name)) client.commands.delete(name);
-          // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-          delete require.cache[require.resolve(`${__dirname}/../commands/${path}/${file}`)];
-        }
-        const loaded = require(`${__dirname}/../commands/${path}/${file}`);
+        const loaded = await import(`${dirname}../commands/${path}/${file}?t=${Date.now()}}`);
         if (loaded?.default) {
           const cmd: Command = new loaded.default();
 

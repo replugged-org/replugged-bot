@@ -9,7 +9,7 @@ import {
 import { Command } from "./command.js";
 import { ButtonMenu } from "./index.js";
 import { idsToSnowflakes } from "../helpers.js";
-import { compact } from "lodash";
+import { compact } from "lodash-es";
 import { PermissionFlagsBits } from "discord.js";
 
 export class CommandUse<Args> {
