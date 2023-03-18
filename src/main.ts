@@ -4,10 +4,12 @@ import { CustomClient } from "./types/index.js";
 import eventHandler from "./handlers/event.js";
 import * as commandHandler from "./handlers/command.js";
 import { readdirSync } from "fs";
+import { fileURLToPath } from "url";
+import path from "path";
+
+const dirname = path.dirname(fileURLToPath(import.meta.url));
 
 dotenv.config({ path: "config.env" });
-
-const dirname = new URL(".", import.meta.url).pathname;
 
 const IntentFlags = Discord.IntentsBitField.Flags;
 
@@ -27,7 +29,7 @@ client.events = new Discord.Collection();
 client.help = new Discord.Collection();
 
 await Promise.all(
-  readdirSync(`${dirname}commands`).map(async (c) => {
+  readdirSync(`${dirname}/commands`).map(async (c) => {
     if (!c.includes(".")) await commandHandler.load(client, c, false, false);
   }),
 );
