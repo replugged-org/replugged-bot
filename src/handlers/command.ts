@@ -7,8 +7,9 @@ import {
   ApplicationCommandType,
   ChatInputApplicationCommandData,
 } from "discord.js";
-import { fileURLToPath } from "url";
+import { fileURLToPath, pathToFileURL } from "url";
 import path from "path";
+const { join } = path;
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -21,7 +22,7 @@ export async function load(
   const dev = process.env.NODE_ENV == "development";
   const serverID = (dev && process.env.SERVER_ID) || undefined;
 
-  const commands = readdirSync(`${dirname}/../commands/${path}`);
+  const commands = readdirSync(pathToFileURL(join(dirname, '/../commands', path)));
   let slashCommands: SlashCommandData[] = [];
   let slashCommandSubcommands: Record<string, SlashCommandData> = {};
   for (let file of commands) {
@@ -37,7 +38,7 @@ export async function load(
             : `${subcommand}.${file.replace(".js", "")}`
           : file.replace(".js", "");
       if (file.endsWith(".js")) {
-        const loaded = await import(`${dirname}/../commands/${path}/${file}?t=${Date.now()}}`);
+        const loaded = await import(`${pathToFileURL(join(dirname, '/../commands', path, file)).href}?t=${Date.now()}`);
         if (loaded?.default) {
           const cmd: Command = new loaded.default();
 
