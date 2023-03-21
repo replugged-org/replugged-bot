@@ -4,6 +4,7 @@ import { CustomClient } from "./types/index.js";
 import eventHandler from "./handlers/event.js";
 import * as commandHandler from "./handlers/command.js";
 import { readdirSync } from "fs";
+import { PrismaClient } from "@prisma/client";
 import { fileURLToPath, pathToFileURL } from "url";
 import path from "path";
 
@@ -36,6 +37,9 @@ await Promise.all(
 
 await eventHandler(client);
 
-client.login(process.env.TOKEN).catch((e) => {
+client.prisma = new PrismaClient();
+
+client.login(process.env.TOKEN).catch(async (e) => {
+  await client.prisma?.$disconnect();
   console.log(e);
 });

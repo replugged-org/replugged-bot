@@ -1,0 +1,56 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model accounts {
+  id            BigInt    @id @default(autoincrement())
+  user_id       BigInt
+  account_id    String?   @db.VarChar(255)
+  account_name  String    @db.VarChar(255)
+  name          String?   @db.VarChar(255)
+  access_token  String    @db.Text
+  refresh_token String    @db.Text
+  token_type    String    @db.VarChar(255)
+  expires_at    BigInt
+  created_at    DateTime? @default(now()) @db.DateTime(0)
+  updated_at    DateTime? @db.DateTime(0)
+  users         users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "accounts_ibfk_1")
+
+  @@index([account_id], map: "account_id")
+  @@index([user_id], map: "user_id")
+}
+
+model patreon_data {
+  id              BigInt    @id @default(autoincrement())
+  user_id         BigInt
+  badge           String?   @db.Text
+  badge_color     String?   @db.VarChar(255)
+  badge_title     String?   @db.Text
+  pledge_tier     Int       @default(0)
+  perks_expire_at BigInt    @default(-1)
+  created_at      DateTime? @default(now()) @db.DateTime(0)
+  updated_at      DateTime? @db.DateTime(0)
+  users           users     @relation(fields: [user_id], references: [id], onDelete: NoAction, onUpdate: NoAction, map: "patreon_data_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
+model users {
+  id             BigInt         @id @default(autoincrement())
+  name           String         @db.VarChar(255)
+  email          String         @unique(map: "email") @db.VarChar(255)
+  discord_id     BigInt         @unique(map: "discord_id")
+  avatar         String         @db.VarChar(255)
+  discriminator  String         @db.VarChar(255)
+  flags          Int            @default(0)
+  created_at     DateTime?      @default(now()) @db.DateTime(0)
+  updated_at     DateTime?      @db.DateTime(0)
+  remember_token String?        @db.VarChar(100)
+  accounts       accounts[]
+  patreon_data   patreon_data[]
+}

@@ -26,12 +26,16 @@
     "eslint-config-dmitmel": "github:dmitmel/eslint-config-dmitmel",
     "eslint-plugin-node": "^11.1.0",
     "prettier": "^2.8.4",
+    "prisma": "^4.11.0",
     "typescript": "^4.7.4"
   },
   "dependencies": {
+    "@prisma/client": "^4.11.0",
+    "@types/mysql": "^2.15.21",
     "discord.js": "^14.8.0",
     "dotenv": "^16.0.1",
-    "lodash-es": "^4.17.21"
+    "lodash-es": "^4.17.21",
+    "mysql": "^2.18.1"
   },
   "engines": {
     "node": ">=16.0.0"

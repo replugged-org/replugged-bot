@@ -1,3 +1,4 @@
+import type { PrismaClient } from "@prisma/client";
 import * as Discord from "discord.js";
 import { Command } from "../stuct/command.js";
 import { CommandHelp, SlashCommandData } from "./command.js";
@@ -7,6 +8,7 @@ export class CustomClient extends Discord.Client {
   public commands?: Discord.Collection<string, Command>;
   public help?: Discord.Collection<string, CommandHelp>;
   public slashCommands?: SlashCommandData[];
+  public prisma?: PrismaClient;
   public declare application: Discord.ClientApplication;
 }
 
