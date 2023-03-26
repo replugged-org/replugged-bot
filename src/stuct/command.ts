@@ -1,6 +1,17 @@
 import * as Discord from "discord.js";
 import { CommandConfig, CommandHelp, CommandOptions } from "../types/index.js";
 import { CommandUse } from "./commanduse.js";
+import type { Promisable } from "type-fest";
+
+export type AutocompleteReturnType = Promisable<
+  Discord.ApplicationCommandOptionChoiceData[] | null | undefined
+>;
+
+export interface AutocompleteArgsType<T> {
+  name: keyof T;
+  value: string;
+  interaction: Discord.AutocompleteInteraction;
+}
 
 export abstract class Command {
   public help: CommandHelp;
@@ -17,7 +28,6 @@ export abstract class Command {
     mainCommandDescription,
     category,
     args = [],
-    examples = [],
     flags = [],
     cooldown = 0,
     limit = -1,
@@ -34,7 +44,6 @@ export abstract class Command {
       mainCommandDescription,
       category,
       args,
-      examples,
       hidden,
       slashCommand,
       textCommand,
@@ -86,4 +95,6 @@ export abstract class Command {
   }
 
   public abstract run(command: CommandUse<never>): Promise<void>;
+
+  public autocomplete?(interaction: AutocompleteArgsType<never>): AutocompleteReturnType;
 }

@@ -21,7 +21,6 @@ export default class Help extends Command {
           required: false,
         },
       ],
-      examples: ["help", "help ping"],
     });
   }
 
@@ -46,7 +45,6 @@ export default class Help extends Command {
         cmd = Object.assign({}, cmd);
         cmd.name = key;
         cmd.description = cmd.description || "No help found";
-        cmd.examples = cmd.examples.map((example) => `\`/${example}\``);
         return cmd;
       });
 
@@ -66,7 +64,7 @@ export default class Help extends Command {
           return cats;
         }, {});
 
-      const categoryList = ["Information"];
+      const categoryList = ["Information", "Replugged"];
 
       categoryPages = Object.fromEntries(
         Object.entries(categories).map((category): [string, BaseMessageOptions[]] => {
