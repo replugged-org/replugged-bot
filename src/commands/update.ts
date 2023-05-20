@@ -3,7 +3,7 @@ import { GuildTextableChannel, Message } from 'eris';
 import { existsSync, mkdirSync } from 'fs';
 import { writeFile } from 'fs/promises';
 import path from 'path';
-import { UserFlags } from '../constants';
+import { UserFlags } from '../constants.js';
 import { User as DBUser } from '../db.js';
 
 export const description = 'Nope';
