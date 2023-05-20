@@ -54,7 +54,7 @@ export async function executor(msg: Message<GuildTextableChannel>, args: string[
 
   const headers: Record<string, string> = {};
   if (token) {
-    headers.Authorization = `token ${token}`;
+    headers.Authorization = `Bearer ${token}`;
   }
 
   const [repoId, addonId] = args;
