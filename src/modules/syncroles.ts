@@ -26,11 +26,7 @@ const SYNC_SERVER_TO_DB: UserFlagKeys[] = [
 // Remove flag from DB when user leaves server
 const REMOVE_FLAG_ON_LEAVE: UserFlagKeys[] = ['SERVER_BOOSTER'];
 
-async function upsertUser(
-  collection: Collection<User>,
-  id: string,
-  data: Partial<User>
-) {
+async function upsertUser(collection: Collection<User>, id: string, data: Partial<User>) {
   const res = await collection.findOneAndUpdate(
     { _id: id },
     {
@@ -38,7 +34,7 @@ async function upsertUser(
       $min: { createdAt: new Date() },
       $set: data,
     },
-    { upsert: true, returnDocument: 'after' }
+    { upsert: true, returnDocument: 'after' },
   );
   return res.value!;
 }
@@ -59,10 +55,8 @@ export default async function (client: CommandClient) {
     // If no user or ghost user just ignore it;
     if (!user || user.flags & UserFlags['GHOST']) return;
 
-    const rolesToAdd = SYNC_DB_TO_SERVER.filter(
-      (x) => x === '_' || user.flags & UserFlags[x]
-    );
-    rolesToAdd.forEach((role) => member.addRole(flagRoles[role]!));
+    const rolesToAdd = SYNC_DB_TO_SERVER.filter((x) => x === '_' || user.flags & UserFlags[x]);
+    rolesToAdd.forEach((role) => member.addRole(flagRoles[role]!).catch(null));
   });
 
   client.on('guildMemberUpdate', async (_, member) => {
@@ -72,13 +66,14 @@ export default async function (client: CommandClient) {
 
     const user = await findUser(collection, member.id);
     // do nothing;
-    if(!user || user.flags & UserFlags['GHOST']) return;
+    if (!user || user.flags & UserFlags['GHOST']) return;
 
-    const flagsToAdd = SYNC_SERVER_TO_DB.filter((x) =>
-      member.roles.includes(flagRoles[x]!)
-    ).reduce((acc, cur) => acc | UserFlags[cur], 0);
+    const flagsToAdd = SYNC_SERVER_TO_DB.filter((x) => member.roles.includes(flagRoles[x]!)).reduce(
+      (acc, cur) => acc | UserFlags[cur],
+      0,
+    );
     const flagsToRemove = SYNC_SERVER_TO_DB.filter(
-      (x) => !member.roles.includes(flagRoles[x]!)
+      (x) => !member.roles.includes(flagRoles[x]!),
     ).reduce((acc, cur) => acc | UserFlags[cur], 0);
     if (!user) {
       if (flagsToAdd)
@@ -88,8 +83,7 @@ export default async function (client: CommandClient) {
       return;
     }
     const newFlags = (user.flags | flagsToAdd) & ~flagsToRemove;
-    if (newFlags !== user.flags)
-      upsertUser(collection, member.id, { flags: newFlags });
+    if (newFlags !== user.flags) upsertUser(collection, member.id, { flags: newFlags });
   });
 
   client.on('messageCreate', async ({ member }) => {
@@ -99,10 +93,8 @@ export default async function (client: CommandClient) {
 
     const user = await findUser(collection, member.id);
     if (!user || user.flags & UserFlags['GHOST']) return;
-    const rolesToAdd = SYNC_DB_TO_SERVER.filter(
-      (x) => x === '_' || user.flags & UserFlags[x]
-    );
-    rolesToAdd.forEach((role) => member.addRole(flagRoles[role]!));
+    const rolesToAdd = SYNC_DB_TO_SERVER.filter((x) => x === '_' || user.flags & UserFlags[x]);
+    rolesToAdd.forEach((role) => member.addRole(flagRoles[role]!).catch(() => null));
   });
 
   client.on('guildMemberRemove', async (_, member) => {
@@ -111,9 +103,7 @@ export default async function (client: CommandClient) {
     const user = await findUser(collection, member.id);
     if (!user || user.flags & UserFlags['GHOST']) return;
     const newFlags =
-			user.flags &
-			~REMOVE_FLAG_ON_LEAVE.reduce((acc, cur) => acc | UserFlags[cur], 0);
-    if (newFlags !== user.flags)
-      upsertUser(collection, member.id, { flags: newFlags });
+      user.flags & ~REMOVE_FLAG_ON_LEAVE.reduce((acc, cur) => acc | UserFlags[cur], 0);
+    if (newFlags !== user.flags) upsertUser(collection, member.id, { flags: newFlags });
   });
 }
