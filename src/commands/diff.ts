@@ -49,32 +49,63 @@ export async function executor(msg: Message<GuildTextableChannel>, args: string[
     return;
   }
 
-  const res = await fetch(`https://api.github.com/repos/${repoId}/tags`, {
+  const releasesRes = await fetch(`https://api.github.com/repos/${repoId}/releases`, {
     headers,
   });
-  if (!res.ok) {
-    console.error('Error getting tags', await res.text()); // May have sensitive info so we won't share it in Discord
+  if (!releasesRes.ok) {
+    console.error('Error getting release', await releasesRes.text()); // May have sensitive info so we won't share it in Discord
+    msg.channel.createMessage('Error getting release');
+    return;
+  }
+  const releases = (await releasesRes.json()).sort((a: any, b: any) => {
+    const aDate = new Date(a.published_at);
+    const bDate = new Date(b.published_at);
+    return bDate.getTime() - aDate.getTime();
+  }) as any;
+  const firstRelease = releases[0];
+  if (!firstRelease) {
+    msg.channel.createMessage('No releases found');
+    return;
+  }
+  const firstReleaseName = firstRelease.name;
+  const firstReleaseTag = firstRelease.tag_name;
+  const secondRelease = releases[1];
+  if (!secondRelease) {
+    msg.channel.createMessage('No second release found');
+    return;
+  }
+  const secondReleaseName = secondRelease.name;
+  const secondReleaseTag = secondRelease.tag_name;
+
+  const tagsRes = await fetch(`https://api.github.com/repos/${repoId}/tags`, {
+    headers,
+  });
+  if (!tagsRes.ok) {
+    console.error('Error getting tags', await tagsRes.text()); // May have sensitive info so we won't share it in Discord
     msg.channel.createMessage('Error getting tags');
     return;
   }
 
-  const json = await res.json();
-  const latest = json[0];
-  if (!latest) {
-    msg.channel.createMessage('No tags found');
+  const json = await tagsRes.json();
+  const firstTag = json.find((tag: any) => tag.name === firstReleaseTag);
+  if (!firstTag) {
+    msg.channel.createMessage(
+      `Could not find tag ${firstReleaseTag} for release ${firstReleaseName}`,
+    );
     return;
   }
-  const latestCommit = latest.commit.sha;
-  const latestVersion = latest.name;
-
-  const second = json[1];
-  if (!second) {
-    msg.channel.createMessage('No second tag found');
+  const firstCommit = firstTag.commit.sha;
+  const secondTag = json.find((tag: any) => tag.name === secondReleaseTag);
+  if (!secondTag) {
+    msg.channel.createMessage(
+      `Could not find tag ${secondReleaseTag} for release ${secondReleaseName}`,
+    );
     return;
   }
-  const secondCommit = second.commit.sha;
-  const secondVersion = second.name;
+  const secondCommit = secondTag.commit.sha;
 
-  const diffUrl = `https://github.com/${repoId}/compare/${secondCommit}...${latestCommit}`;
-  msg.channel.createMessage(`Update from ${secondVersion} to ${latestVersion}: <${diffUrl}>`);
+  const diffUrl = `https://github.com/${repoId}/compare/${secondCommit}...${firstCommit}`;
+  msg.channel.createMessage(
+    `Update from ${secondReleaseName} to ${firstReleaseName}: <${diffUrl}>`,
+  );
 }
