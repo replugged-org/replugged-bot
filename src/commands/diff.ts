@@ -76,5 +76,5 @@ export async function executor(msg: Message<GuildTextableChannel>, args: string[
   const secondVersion = second.name;
 
   const diffUrl = `https://github.com/${repoId}/compare/${secondCommit}...${latestCommit}`;
-  msg.channel.createMessage(`Update from ${secondVersion} to ${latestVersion}: ${diffUrl}`);
+  msg.channel.createMessage(`Update from ${secondVersion} to ${latestVersion}: <${diffUrl}>`);
 }
