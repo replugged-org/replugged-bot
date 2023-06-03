@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { GuildTextableChannel, Message } from 'eris';
+import { GuildTextableChannel, GuildTextChannelTypes, Message } from 'eris';
 import { UserFlags } from '../constants.js';
 import { User as DBUser } from '../db.js';
 
@@ -20,10 +20,32 @@ export async function executor(msg: Message<GuildTextableChannel>, args: string[
     headers.Authorization = `Bearer ${token}`;
   }
 
-  const [repoId] = args;
+  let [repoId] = args;
 
+  let errorMsg = `Usage: ${process.env.PREFIX}diff <user/repo>`;
   if (!repoId) {
-    msg.channel.createMessage(`Usage: ${process.env.PREFIX}diff <user/repo>`);
+    // Try to extract repo from the original message
+
+    // @ts-expect-error Eris is dumb
+    const threadType: GuildTextChannelTypes = 11; // PUBLIC_THREAD
+    if (msg.channel.type === threadType) {
+      const firstMessageId = msg.channel.id;
+      const firstMessage = await msg.channel.getMessage(firstMessageId);
+      if (firstMessage) {
+        const content = firstMessage.content || '';
+        const match = content.matchAll(/https?:\/\/github\.com\/([^/\s]+\/[^/\s]+)/g);
+        const matches = [...match];
+        if (matches.length === 1) {
+          repoId = matches[0][1];
+        }
+        if (matches.length > 1) {
+          errorMsg = 'Multiple repos found in thread, must specify';
+        }
+      }
+    }
+  }
+  if (!repoId) {
+    msg.channel.createMessage(errorMsg);
     return;
   }
 
