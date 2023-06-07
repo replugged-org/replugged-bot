@@ -1,5 +1,7 @@
 import { GuildMember, Role } from "discord.js";
-import { IDS, UserFlagKeys, UserFlags, UserFlagsArray } from './constants.js';
+import { IDS, UserFlagKeys, UserFlags, UserFlagsArray } from "./constants.js";
+import { existsSync, mkdirSync } from "fs";
+import path from "path";
 
 export function idFromMention(string: string): `${bigint}` | null {
   if (string.endsWith(">")) {
@@ -37,7 +39,7 @@ export function idToSnowflake(id: string): `${bigint}` | null {
 /**
  * @param flag the replugged flag that the member has
  * @param member the replugged guild member
- * 
+ *
  * @returns a list of role ids that the member needs to add/remove
  */
 export function validateFlags(flag: number, member: GuildMember): Array<[boolean, Role]> {
@@ -46,26 +48,86 @@ export function validateFlags(flag: number, member: GuildMember): Array<[boolean
   const toggleRoles: Array<[boolean, string]> = [];
 
   // Check if the member has the flag but doesn't have role OR check if member has role but doesn't have the flag
-  if (!roles.has(IDS.flagRoles.CONTRIBUTOR!) !== !((flag & UserFlags.CONTRIBUTOR) === UserFlags.CONTRIBUTOR)) {
+  if (
+    !roles.has(IDS.flagRoles.CONTRIBUTOR!) !==
+    !((flag & UserFlags.CONTRIBUTOR) === UserFlags.CONTRIBUTOR)
+  ) {
     toggleRoles.push([roles.has(IDS.flagRoles.CONTRIBUTOR!), IDS.flagRoles.CONTRIBUTOR!]);
   }
-  if (!roles.has(IDS.flagRoles.SERVER_BOOSTER!) !== !((flag & UserFlags.SERVER_BOOSTER) === UserFlags.SERVER_BOOSTER)) {
+  if (
+    !roles.has(IDS.flagRoles.SERVER_BOOSTER!) !==
+    !((flag & UserFlags.SERVER_BOOSTER) === UserFlags.SERVER_BOOSTER)
+  ) {
     toggleRoles.push([roles.has(IDS.flagRoles.SERVER_BOOSTER!), IDS.flagRoles.SERVER_BOOSTER!]);
   }
-  if (!roles.has(IDS.flagRoles.TRANSLATOR!) !== !((flag & UserFlags.TRANSLATOR) === UserFlags.TRANSLATOR)) {
+  if (
+    !roles.has(IDS.flagRoles.TRANSLATOR!) !==
+    !((flag & UserFlags.TRANSLATOR) === UserFlags.TRANSLATOR)
+  ) {
     toggleRoles.push([roles.has(IDS.flagRoles.TRANSLATOR!), IDS.flagRoles.TRANSLATOR!]);
   }
-  if (!roles.has(IDS.flagRoles.BUG_HUNTER!) !== !((flag & UserFlags.BUG_HUNTER) === UserFlags.BUG_HUNTER)) {
+  if (
+    !roles.has(IDS.flagRoles.BUG_HUNTER!) !==
+    !((flag & UserFlags.BUG_HUNTER) === UserFlags.BUG_HUNTER)
+  ) {
     toggleRoles.push([roles.has(IDS.flagRoles.BUG_HUNTER!), IDS.flagRoles.BUG_HUNTER!]);
   }
-  if (!roles.has(IDS.flagRoles.EARLY_USER!) !== !((flag & UserFlags.EARLY_USER) === UserFlags.EARLY_USER)) {
+  if (
+    !roles.has(IDS.flagRoles.EARLY_USER!) !==
+    !((flag & UserFlags.EARLY_USER) === UserFlags.EARLY_USER)
+  ) {
     toggleRoles.push([roles.has(IDS.flagRoles.EARLY_USER!), IDS.flagRoles.EARLY_USER!]);
   }
   if (!roles.has(IDS.flagRoles._!)) {
     toggleRoles.push([roles.has(IDS.flagRoles._!), IDS.flagRoles._!]);
   }
 
-  const guildRoles = toggleRoles.map(([hasRole, roleId]) => [hasRole, member.guild.roles.cache.get(roleId)]) as Array<[boolean, Role]>;
+  const guildRoles = toggleRoles.map(([hasRole, roleId]) => [
+    hasRole,
+    member.guild.roles.cache.get(roleId),
+  ]) as Array<[boolean, Role]>;
 
   return guildRoles;
+}
+
+/**
+ * Gets the path to addons folder based on os and creates if needed
+ * @returns the path to the addons folder
+ */
+export const ADDONS_FOLDER = ((): string => {
+  let path: string;
+
+  switch (process.platform) {
+    case "linux":
+      path = "/var/lib/replugged-backend/addons";
+      break;
+    case "win32":
+      path = "C:\\RepluggedData\\v";
+      break;
+    case "darwin":
+      path = `${process.env.HOME}/Library/Application Support/replugged-backend/addons`;
+      break;
+    default:
+      throw new Error(`Unsupported platform: ${process.platform}`);
+  }
+
+  if (!existsSync(path)) {
+    mkdirSync(path, {
+      recursive: true,
+    });
+  }
+
+  return path;
+})();
+
+/**
+ * Creates the dir to a file specified
+ * @param file the file to create
+ */
+export function createDirForFile(file: string): void {
+  const dir = path.dirname(file);
+  if (existsSync(dir)) return;
+  mkdirSync(dir, {
+    recursive: true,
+  });
 }
