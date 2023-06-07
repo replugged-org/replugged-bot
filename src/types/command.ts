@@ -25,7 +25,6 @@ export interface CommandHelp {
   mainCommandDescription?: string;
   category?: string;
   args: Discord.ApplicationCommandOptionData[];
-  examples: string[];
   subcommands?: string[];
   hidden: boolean;
   slashCommand: boolean;
@@ -52,7 +51,6 @@ export interface CommandOptions {
   mainCommandDescription?: string;
   category?: string;
   args?: Discord.ApplicationCommandOptionData[];
-  examples?: string[];
   flags?: CommandFlags[];
   cooldown?: number;
   limit?: number;
@@ -87,10 +85,9 @@ export interface CommandPermissions {
 export interface CommandResponseOptions {
   reply?: boolean;
   replyPing?: boolean;
-  escapeMentions?: boolean;
-  escapeEveryone?: boolean;
-  userMentions?: Array<`${bigint}`> | null;
-  roleMentions?: Array<`${bigint}`> | null;
+  userMentions?: Array<string | undefined> | boolean | null;
+  roleMentions?: Array<string | undefined> | boolean | null;
+  everyoneMention?: boolean;
   saveOutput?: boolean;
   editOutput?: boolean;
   ephemeral?: boolean;

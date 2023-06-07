@@ -1,5 +1,4 @@
 import * as Discord from "discord.js";
-import { idToSnowflake } from "../helpers.js";
 import { CommandUse } from "../stuct/index.js";
 import { CustomClient } from "../types/index.js";
 
@@ -84,14 +83,33 @@ export default async (client: CustomClient, interaction: Discord.Interaction): P
     }
   }
 
+  if (interaction.isAutocomplete()) {
+    let name = interaction.commandName;
+    const subCommandGroup = interaction.options.getSubcommandGroup(false);
+    const subcommand = interaction.options.getSubcommand(false);
+    if (subCommandGroup) name += `.${subCommandGroup}`;
+    if (subcommand) name += `.${subcommand}`;
+
+    const commandFile = client.commands?.get(name);
+    if (!commandFile) return;
+
+    try {
+      const { name, value } = interaction.options.getFocused(true);
+      const result = await commandFile.autocomplete?.({ name, value, interaction });
+      if (!result) return;
+      await interaction.respond(result.slice(0, 25));
+    } catch (err) {
+      console.error(`An error occurred while running ${name} autocomplete`, err);
+    }
+    return;
+  }
+
   if (interaction.isButton()) {
     if (interaction.customId.startsWith("resend-")) {
       const { channel, user } = interaction;
       if (!channel) return;
       const triggerMessageId = interaction.customId.slice(7);
-      const triggerMessage = await channel.messages
-        .fetch(idToSnowflake(triggerMessageId)!)
-        .catch(() => null);
+      const triggerMessage = await channel.messages.fetch(triggerMessageId).catch(() => null);
       if (!triggerMessage) {
         interaction
           .reply({

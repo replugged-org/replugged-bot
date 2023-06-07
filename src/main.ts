@@ -30,7 +30,7 @@ client.events = new Discord.Collection();
 client.help = new Discord.Collection();
 
 await Promise.all(
-  readdirSync(pathToFileURL(path.join(dirname, 'commands'))).map(async (c) => {
+  readdirSync(pathToFileURL(path.join(dirname, "commands"))).map(async (c) => {
     if (!c.includes(".")) await commandHandler.load(client, c, false, false);
   }),
 );

@@ -8,7 +8,6 @@ import {
 } from "../types/index.js";
 import { Command } from "./command.js";
 import { BaseMessageOptions, ButtonMenu } from "./index.js";
-import { idsToSnowflakes } from "../helpers.js";
 import { compact } from "lodash-es";
 import { PermissionFlagsBits } from "discord.js";
 
@@ -123,42 +122,38 @@ export class CommandUse<Args> {
   ): Promise<Discord.Message | null> {
     if (typeof payload === "string") payload = { content: payload };
 
-    const calculatedOptions = {
+    const calculatedOptions: CommandResponseOptions = {
       reply: true,
       replyPing: false,
-      escapeMentions: false,
-      escapeEveryone: true,
-      userMentions: null,
-      roleMentions: [],
+      userMentions: true,
+      roleMentions: null,
+      everyoneMention: false,
       saveOutput: false,
       editOutput: false,
       ephemeral: false,
       ...options,
     };
 
-    const {
-      reply,
-      replyPing,
-      escapeMentions,
-      escapeEveryone,
-      userMentions,
-      roleMentions,
-      ephemeral,
-    } = calculatedOptions;
-
-    if (payload.content) {
-      if (escapeMentions) {
-        payload.content = payload.content.replace(/@/g, "@\u200b");
-      } else if (escapeEveryone) {
-        payload.content = payload.content.replace(/@(everyone|here)/g, "@\u200b$1");
-      }
-    }
+    const { reply, replyPing, userMentions, roleMentions, everyoneMention, ephemeral } =
+      calculatedOptions;
 
     payload.ephemeral = ephemeral;
 
-    if (!payload.allowedMentions) payload.allowedMentions = {};
-    if (userMentions) payload.allowedMentions.users = compact(idsToSnowflakes(userMentions));
-    if (roleMentions) payload.allowedMentions.roles = compact(idsToSnowflakes(roleMentions));
+    payload.allowedMentions ??= {};
+    payload.allowedMentions.parse ??= [];
+
+    if (userMentions) {
+      payload.allowedMentions.parse.push("users");
+      if (Array.isArray(userMentions)) payload.allowedMentions.users = compact(userMentions);
+    }
+    if (roleMentions) {
+      payload.allowedMentions.parse.push("roles");
+      if (Array.isArray(roleMentions)) payload.allowedMentions.roles = compact(roleMentions);
+    }
+    if (everyoneMention) {
+      payload.allowedMentions.parse.push("everyone");
+    }
+
     if (replyPing && reply) {
       payload.allowedMentions.repliedUser = true;
     }
@@ -287,13 +282,6 @@ export class CommandUse<Args> {
     ].join(" ");
     const { description } = cmdHelp;
     const fields: Discord.EmbedField[] = [];
-
-    if (cmdHelp.examples.length > 0)
-      fields.push({
-        name: "EXAMPLES",
-        value: cmdHelp.examples.join("\n"),
-        inline: true,
-      });
     const components: Array<Discord.ActionRowBuilder<Discord.MessageActionRowComponentBuilder>> =
       [];
     if (cmdHelp.subcommands)

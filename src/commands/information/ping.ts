@@ -8,7 +8,6 @@ export default class Ping extends Command {
       description: "See Bot Response Time",
       category: "Information",
       args: [],
-      examples: ["ping"],
     });
   }
 
