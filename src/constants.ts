@@ -1,4 +1,9 @@
 import { existsSync, mkdirSync } from "fs";
+import dotenv from 'dotenv';
+
+// this file is run before main.ts for some reason
+// and config.env doesn't load in time
+dotenv.config({ path: "config.env" });
 
 export const IDS: {
   server: string;

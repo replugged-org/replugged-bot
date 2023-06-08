@@ -1,5 +1,5 @@
 import { GuildMember, Role } from "discord.js";
-import { IDS, UserFlagKeys, UserFlags, UserFlagsArray } from "./constants.js";
+import { IDS, UserFlags } from "./constants.js";
 import { existsSync, mkdirSync } from "fs";
 import path from "path";
 
@@ -49,32 +49,32 @@ export function validateFlags(flag: number, member: GuildMember): Array<[boolean
 
   // Check if the member has the flag but doesn't have role OR check if member has role but doesn't have the flag
   if (
-    !roles.has(IDS.flagRoles.CONTRIBUTOR!) !==
-    !((flag & UserFlags.CONTRIBUTOR) === UserFlags.CONTRIBUTOR)
+    roles.has(IDS.flagRoles.CONTRIBUTOR!) !==
+    ((flag & UserFlags.CONTRIBUTOR) === UserFlags.CONTRIBUTOR)
   ) {
     toggleRoles.push([roles.has(IDS.flagRoles.CONTRIBUTOR!), IDS.flagRoles.CONTRIBUTOR!]);
   }
   if (
-    !roles.has(IDS.flagRoles.SERVER_BOOSTER!) !==
-    !((flag & UserFlags.SERVER_BOOSTER) === UserFlags.SERVER_BOOSTER)
+    roles.has(IDS.flagRoles.SERVER_BOOSTER!) !==
+    ((flag & UserFlags.SERVER_BOOSTER) === UserFlags.SERVER_BOOSTER)
   ) {
     toggleRoles.push([roles.has(IDS.flagRoles.SERVER_BOOSTER!), IDS.flagRoles.SERVER_BOOSTER!]);
   }
   if (
-    !roles.has(IDS.flagRoles.TRANSLATOR!) !==
-    !((flag & UserFlags.TRANSLATOR) === UserFlags.TRANSLATOR)
+    roles.has(IDS.flagRoles.TRANSLATOR!) !==
+    ((flag & UserFlags.TRANSLATOR) === UserFlags.TRANSLATOR)
   ) {
     toggleRoles.push([roles.has(IDS.flagRoles.TRANSLATOR!), IDS.flagRoles.TRANSLATOR!]);
   }
   if (
-    !roles.has(IDS.flagRoles.BUG_HUNTER!) !==
-    !((flag & UserFlags.BUG_HUNTER) === UserFlags.BUG_HUNTER)
+    roles.has(IDS.flagRoles.BUG_HUNTER!) !==
+    ((flag & UserFlags.BUG_HUNTER) === UserFlags.BUG_HUNTER)
   ) {
     toggleRoles.push([roles.has(IDS.flagRoles.BUG_HUNTER!), IDS.flagRoles.BUG_HUNTER!]);
   }
   if (
-    !roles.has(IDS.flagRoles.EARLY_USER!) !==
-    !((flag & UserFlags.EARLY_USER) === UserFlags.EARLY_USER)
+    roles.has(IDS.flagRoles.EARLY_USER!) !==
+    ((flag & UserFlags.EARLY_USER) === UserFlags.EARLY_USER)
   ) {
     toggleRoles.push([roles.has(IDS.flagRoles.EARLY_USER!), IDS.flagRoles.EARLY_USER!]);
   }

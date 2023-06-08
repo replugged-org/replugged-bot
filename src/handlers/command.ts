@@ -9,6 +9,7 @@ import {
 } from "discord.js";
 import { fileURLToPath, pathToFileURL } from "url";
 import path from "path";
+import { IDS } from "../constants.js";
 
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
@@ -19,7 +20,7 @@ export async function load(
   reload: string | boolean | null,
 ): Promise<void> {
   const dev = process.env.NODE_ENV == "development";
-  const serverID = (dev && process.env.SERVER_ID) || undefined;
+  const serverID = (dev && IDS.server) || undefined;
 
   const commands = readdirSync(pathToFileURL(path.join(dirname, "../commands", filePath)));
   let slashCommands: SlashCommandData[] = [];
