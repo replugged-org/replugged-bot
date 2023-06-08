@@ -10,6 +10,7 @@ import { Command } from "./command.js";
 import { BaseMessageOptions, ButtonMenu } from "./index.js";
 import { compact } from "lodash-es";
 import { PermissionFlagsBits } from "discord.js";
+import { UserFlags } from "../constants.js";
 
 export class CommandUse<Args> {
   public args: Args;
@@ -68,17 +69,60 @@ export class CommandUse<Args> {
           content: "An error occurred, please try again.",
         },
       };
-
-    if (
-      this.command.config.flags.includes("admin") &&
-      !member?.permissions.has(PermissionFlagsBits.ManageGuild)
-    )
-      return {
-        canUse: false,
-        responseMessage: {
-          content: "This command requires the manage server permission to run.",
-        },
-      };
+    
+    const db_user = await this.client.prisma?.users?.findFirst({
+      where: { discord_id: parseInt(member.id, 10) },
+    });
+    console.log(db_user?.name);
+    if (db_user) {
+      console.log(db_user.flags);
+      console.log(this.command.config.flags);
+      console.log(db_user.flags & UserFlags.DEVELOPER);
+      if (
+        this.command.config.flags.includes("admin") &&
+        (db_user.flags & UserFlags.ADMIN) !== UserFlags.ADMIN
+      ) {
+        return {
+          canUse: false,
+          responseMessage: {
+            content: "You must be an admin to run this command.",
+          },
+        };
+      }
+      if (
+        this.command.config.flags.includes("staff") &&
+        (db_user.flags & UserFlags.STAFF) !== UserFlags.STAFF
+      ) {
+        return {
+          canUse: false,
+          responseMessage: {
+            content: "You must be staff to run this command.",
+          },
+        };
+      }
+      if (
+        this.command.config.flags.includes("dev") &&
+        (db_user.flags & UserFlags.DEVELOPER) !== UserFlags.DEVELOPER
+      ) {
+        return {
+          canUse: false,
+          responseMessage: {
+            content: "You must be a developer to run this command.",
+          },
+        };
+      }
+      if (
+        this.command.config.flags.includes("support") &&
+        (db_user.flags & UserFlags.SUPPORT) !== UserFlags.SUPPORT
+      ) {
+        return {
+          canUse: false,
+          responseMessage: {
+            content: "You must be a support staff to run this command.",
+          },
+        };
+      }
+    }
 
     const cooldown = this.command.getCooldown(this.author.id);
     if (cooldown !== 0) {

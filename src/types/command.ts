@@ -62,7 +62,7 @@ export interface CommandOptions {
   subCommandName?: string;
 }
 
-export type CommandFlags = "dev" | "support" | "admin";
+export type CommandFlags = "dev" | "support" | "admin" | "staff";
 
 export interface CanUse {
   canUse: boolean;

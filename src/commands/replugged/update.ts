@@ -23,6 +23,7 @@ export default class Update extends Command {
           type: ApplicationCommandOptionType.String,
         },
       ],
+      flags: ["dev"],
     });
   }
 

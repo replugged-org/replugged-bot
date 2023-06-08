@@ -14,6 +14,7 @@ export default class Diff extends Command {
           type: ApplicationCommandOptionType.String,
         },
       ],
+      flags: ["dev"],
     });
   }
 
