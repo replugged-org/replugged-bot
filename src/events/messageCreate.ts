@@ -7,7 +7,7 @@ export default async (client: CustomClient, message: Message): Promise<void> => 
 
   const member: GuildMember = await message.guild.members.fetch(message.author.id);
   const db_user = await client.prisma?.users?.findFirst({
-    where: { discord_id: parseInt(message.author.id, 10) },
+    where: { discord_id: message.author.id },
   });
 
   if (!db_user) {
@@ -16,19 +16,21 @@ export default async (client: CustomClient, message: Message): Promise<void> => 
     //   data: {
     //     name: message.author.username,
     //     discriminator: message.author.discriminator,
-    //     discord_id: parseInt(message.author.id, 10),
+    //     discord_id: message.author.id,
     //     avatar: message.author.avatarURL() ?? "",
     //     email: `${message.author.username}-${Math.random().toString(36).substring(2)}@replugged.com`,
     //     updated_at: new Date(),
     //   }
     // });
-  } else if (
+    return;
+  }
+  if (
     db_user.name !== message.author.username ||
     db_user.discriminator !== message.author.discriminator ||
     db_user.avatar !== message.author.avatarURL()
   ) {
     await client.prisma?.users.update({
-      where: { discord_id: parseInt(message.author.id, 10) },
+      where: { discord_id: message.author.id },
       data: {
         name: message.author.username,
         discriminator: message.author.discriminator,
@@ -36,25 +38,15 @@ export default async (client: CustomClient, message: Message): Promise<void> => 
         updated_at: new Date(),
       },
     });
-
-    const toggleRoles = validateFlags(db_user.flags, member);
-
-    toggleRoles.forEach(async ([hasRole, roleID]) => {
-      if (!hasRole) {
-        await member.roles.add(roleID);
-      } else {
-        await member.roles.remove(roleID);
-      }
-    });
-  } else {
-    const toggleRoles = validateFlags(db_user.flags, member);
-
-    toggleRoles.forEach(async ([hasRole, roleID]) => {
-      if (!hasRole) {
-        await member.roles.add(roleID);
-      } else {
-        await member.roles.remove(roleID);
-      }
-    });
   }
+
+  const toggleRoles = validateFlags(db_user.flags, member);
+
+  toggleRoles.forEach(async ([hasRole, roleID]) => {
+    if (!hasRole) {
+      await member.roles.add(roleID);
+    } else {
+      await member.roles.remove(roleID);
+    }
+  });
 };

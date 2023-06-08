@@ -69,15 +69,11 @@ export class CommandUse<Args> {
           content: "An error occurred, please try again.",
         },
       };
-    
+
     const db_user = await this.client.prisma?.users?.findFirst({
-      where: { discord_id: parseInt(member.id, 10) },
+      where: { discord_id: member.id },
     });
-    console.log(db_user?.name);
     if (db_user) {
-      console.log(db_user.flags);
-      console.log(this.command.config.flags);
-      console.log(db_user.flags & UserFlags.DEVELOPER);
       if (
         this.command.config.flags.includes("admin") &&
         (db_user.flags & UserFlags.ADMIN) !== UserFlags.ADMIN
