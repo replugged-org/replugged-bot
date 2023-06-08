@@ -91,36 +91,6 @@ export function validateFlags(flag: number, member: GuildMember): Array<[boolean
 }
 
 /**
- * Gets the path to addons folder based on os and creates if needed
- * @returns the path to the addons folder
- */
-export const ADDONS_FOLDER = ((): string => {
-  let path: string;
-
-  switch (process.platform) {
-    case "linux":
-      path = "/var/lib/replugged-backend/addons";
-      break;
-    case "win32":
-      path = "C:\\RepluggedData\\v";
-      break;
-    case "darwin":
-      path = `${process.env.HOME}/Library/Application Support/replugged-backend/addons`;
-      break;
-    default:
-      throw new Error(`Unsupported platform: ${process.platform}`);
-  }
-
-  if (!existsSync(path)) {
-    mkdirSync(path, {
-      recursive: true,
-    });
-  }
-
-  return path;
-})();
-
-/**
  * Creates the dir to a file specified
  * @param file the file to create
  */

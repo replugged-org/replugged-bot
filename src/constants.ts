@@ -1,31 +1,29 @@
+import { existsSync, mkdirSync } from "fs";
+
 export const IDS: {
   server: string;
   channels: Partial<Record<string, string>>;
   roles: Partial<Record<string, string>>;
   flagRoles: Partial<Record<UserFlagKeys | "_", string>>;
 } = {
-  server: "1018655358119587881",
+  server: process.env.SERVER_ID ?? "",
   channels: {
-    welcome: "1018655358614515776",
-    rules: "1018655358614515775",
-    faq: "1018655358614515777",
-    starboard: "1018655359038148635",
+    welcome: process.env.CHANNEL_WELCOME,
+    rules: process.env.CHANNEL_RULES,
+    faq: process.env.CHANNEL_FAQ,
+    starboard: process.env.CHANNEL_STARBOARD,
   },
   roles: {
-    forg: "1018655358165733508",
+    forg: process.env.ROLE_FORG,
   },
   flagRoles: {
-    CONTRIBUTOR: "1018655358140551173",
-    SERVER_BOOSTER: "1018655358140551175",
-    TRANSLATOR: "1018655358140551172",
-    BUG_HUNTER: "1018655358119587888",
-    EARLY_USER: "1018655358119587886",
-    _: "1018655358119587885",
+    CONTRIBUTOR: process.env.ROLE_CONTRIBUTOR,
+    SERVER_BOOSTER: process.env.ROLE_SERVER_BOOSTER,
+    TRANSLATOR: process.env.ROLE_TRANSLATOR,
+    BUG_HUNTER: process.env.ROLE_BUG_HUNTER,
+    EARLY_USER: process.env.ROLE_EARLY_USER,
+    _: process.env.ROLE_USER,
   },
-};
-
-export const MESSAGES = {
-  welcome: "Hello %user and welcome to Replugged! Please make sure to read %rules and %faq.",
 };
 
 // Visibility:
@@ -140,3 +138,29 @@ export const UserFlagsArray: Array<{
   value,
   label: UserFlagsText[value],
 }));
+
+export const ADDONS_FOLDER = ((): string => {
+  let path: string;
+
+  switch (process.platform) {
+    case "linux":
+      path = "/var/lib/replugged-backend/addons";
+      break;
+    case "win32":
+      path = "C:\\RepluggedData\\v";
+      break;
+    case "darwin":
+      path = `${process.env.HOME}/Library/Application Support/replugged-backend/addons`;
+      break;
+    default:
+      throw new Error(`Unsupported platform: ${process.platform}`);
+  }
+
+  if (!existsSync(path)) {
+    mkdirSync(path, {
+      recursive: true,
+    });
+  }
+
+  return path;
+})();

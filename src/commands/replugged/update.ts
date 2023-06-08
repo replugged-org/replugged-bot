@@ -2,7 +2,8 @@ import path from "path";
 import { writeFile } from "fs/promises";
 import { ApplicationCommandOptionType } from "discord.js";
 import { Command, CommandUse } from "../../stuct/index.js";
-import { ADDONS_FOLDER, createDirForFile } from "../../helpers.js";
+import { createDirForFile } from "../../helpers.js";
+import { ADDONS_FOLDER } from "../../constants.js";
 
 export default class Update extends Command {
   public constructor() {
