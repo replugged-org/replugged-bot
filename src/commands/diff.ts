@@ -68,6 +68,9 @@ export async function executor(msg: Message<GuildTextableChannel>, args: string[
     return;
   }
   const firstReleaseName = firstRelease.name;
+  const asarAssets = firstRelease.assets.filter((x: any) => x.name.endsWith('.asar'));
+  const isNotByAction = asarAssets.some((x: any) => x.uploader.login !== 'github-actions[bot]');
+  const isModified = asarAssets.some((x: any) => x.created_at !== x.updated_at);
   const firstReleaseTag = firstRelease.tag_name;
   const secondRelease = releases[1];
   if (!secondRelease) {
@@ -106,6 +109,8 @@ export async function executor(msg: Message<GuildTextableChannel>, args: string[
 
   const diffUrl = `https://github.com/${repoId}/compare/${secondCommit}...${firstCommit}`;
   msg.channel.createMessage(
-    `Update from ${secondReleaseName} to ${firstReleaseName}: <${diffUrl}>`,
+    `Update from ${secondReleaseName} to ${firstReleaseName}: <${diffUrl}>${
+      isNotByAction ? '\n:warning: Asar was not released by GitHub Actions.' : ''
+    }${isModified ? '\n:warning: Asar was modified after release.' : ''}`,
   );
 }
