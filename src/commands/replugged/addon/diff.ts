@@ -1,10 +1,10 @@
 import { ApplicationCommandOptionType } from "discord.js";
-import { Command, CommandUse } from "../../stuct/index.js";
+import { Command, CommandUse } from "../../../stuct/index.js";
 
 export default class Diff extends Command {
   public constructor() {
     super({
-      name: "diff",
+      name: "addon.diff",
       description: "get the difference between releases",
       category: "Replugged",
       args: [
@@ -14,7 +14,6 @@ export default class Diff extends Command {
           type: ApplicationCommandOptionType.String,
         },
       ],
-      flags: ["dev"],
     });
   }
 

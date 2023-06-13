@@ -1,14 +1,14 @@
 import path from "path";
 import { writeFile } from "fs/promises";
 import { ApplicationCommandOptionType } from "discord.js";
-import { Command, CommandUse } from "../../stuct/index.js";
-import { createDirForFile } from "../../helpers.js";
-import { ADDONS_FOLDER } from "../../constants.js";
+import { Command, CommandUse } from "../../../stuct/index.js";
+import { createDirForFile } from "../../../helpers.js";
+import { ADDONS_FOLDER } from "../../../constants.js";
 
 export default class Update extends Command {
   public constructor() {
     super({
-      name: "update",
+      name: "addon.update",
       description: "update the repo in store",
       category: "Replugged",
       args: [

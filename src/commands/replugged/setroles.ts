@@ -27,6 +27,7 @@ export default class SetRoles extends Command {
           name: "user",
           description: "User to set roles for",
           type: ApplicationCommandOptionType.User,
+          required: true,
         },
       ],
       flags: ["admin"],
@@ -77,7 +78,7 @@ export default class SetRoles extends Command {
         else if (id.startsWith("toggle-")) {
           const flag = id.substring("toggle-".length) as UserFlagKeys;
           if (target.id === command.author.id && flag === "ADMIN") {
-            interaction.reply({
+            await interaction.reply({
               content: "don't remove your own admin flag",
               flags: MessageFlags.Ephemeral,
             });

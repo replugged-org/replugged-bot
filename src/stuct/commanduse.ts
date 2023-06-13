@@ -9,7 +9,6 @@ import {
 import { Command } from "./command.js";
 import { BaseMessageOptions, ButtonMenu } from "./index.js";
 import { compact } from "lodash-es";
-import { PermissionFlagsBits } from "discord.js";
 import { UserFlags } from "../constants.js";
 
 export class CommandUse<Args> {

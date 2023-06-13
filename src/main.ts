@@ -41,5 +41,5 @@ client.prisma = new PrismaClient();
 
 client.login(process.env.TOKEN).catch(async (e) => {
   await client.prisma?.$disconnect();
-  console.log(e);
+  console.error(e);
 });
