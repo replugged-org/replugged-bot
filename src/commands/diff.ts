@@ -28,19 +28,19 @@ export async function executor(msg: Message<GuildTextableChannel>, args: string[
 
     // @ts-expect-error Eris is dumb
     const threadType: GuildTextChannelTypes = 11; // PUBLIC_THREAD
-    if (msg.channel.type === threadType) {
-      const firstMessageId = msg.channel.id;
-      const firstMessage = await msg.channel.getMessage(firstMessageId);
-      if (firstMessage) {
-        const content = firstMessage.content || '';
-        const match = content.matchAll(GITHUB_RGX);
-        const matches = [...match];
-        if (matches.length === 1) {
-          repoId = matches[0][1];
-        }
-        if (matches.length > 1) {
-          errorMsg = 'Multiple repos found in thread, must specify';
-        }
+    const isThread = msg.channel.type === threadType;
+    const firstMessage = isThread ? await msg.channel.getMessage(msg.channel.id) : null;
+    const repliedMessage = msg.referencedMessage;
+    const messageToCheck = repliedMessage || firstMessage;
+    if (messageToCheck) {
+      const content = messageToCheck.content || '';
+      const match = content.matchAll(GITHUB_RGX);
+      const matches = [...match];
+      if (matches.length === 1) {
+        repoId = matches[0][1];
+      }
+      if (matches.length > 1) {
+        errorMsg = 'Multiple repos found in thread, must specify';
       }
     }
   }
