@@ -1,6 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { GuildTextableChannel, GuildTextChannelTypes, Message } from 'eris';
-import { UserFlags } from '../constants.js';
+import { GITHUB_RGX, UserFlags } from '../constants.js';
 import { User as DBUser } from '../db.js';
 
 export const description = 'Nope';
@@ -33,7 +33,7 @@ export async function executor(msg: Message<GuildTextableChannel>, args: string[
       const firstMessage = await msg.channel.getMessage(firstMessageId);
       if (firstMessage) {
         const content = firstMessage.content || '';
-        const match = content.matchAll(/https?:\/\/github\.com\/([^/\s]+\/[^/\s]+)/g);
+        const match = content.matchAll(GITHUB_RGX);
         const matches = [...match];
         if (matches.length === 1) {
           repoId = matches[0][1];
@@ -48,6 +48,8 @@ export async function executor(msg: Message<GuildTextableChannel>, args: string[
     msg.channel.createMessage(errorMsg);
     return;
   }
+  const repoMatch = repoId.match(GITHUB_RGX);
+  if (repoMatch) repoId = repoMatch[1];
 
   const releasesRes = await fetch(`https://api.github.com/repos/${repoId}/releases`, {
     headers,

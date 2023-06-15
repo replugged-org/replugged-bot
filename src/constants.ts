@@ -146,3 +146,5 @@ export const UserFlagsArray: {
   value: value as UserFlagsValues,
   label: UserFlagsText[value as UserFlagsValues]
 }));
+
+export const GITHUB_RGX = /https?:\/\/github\.com\/([\w\.-]+\/[\w\.-]+)/g;
