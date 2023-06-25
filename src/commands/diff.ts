@@ -46,8 +46,8 @@ export async function executor(msg: Message<GuildTextableChannel>, args: string[
     msg.channel.createMessage(errorMsg);
     return;
   }
-  const repoMatch = repoId.match(GITHUB_RGX);
-  if (repoMatch) repoId = repoMatch[1];
+  const repoMatch = [...repoId.matchAll(GITHUB_RGX)];
+  if (repoMatch.length === 1) repoId = repoMatch[0][1];
 
   const releasesRes = await fetch(`https://api.github.com/repos/${repoId}/releases`, {
     headers,
