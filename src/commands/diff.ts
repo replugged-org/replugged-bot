@@ -70,7 +70,10 @@ export async function executor(msg: Message<GuildTextableChannel>, args: string[
   const firstReleaseName = firstRelease.name;
   const asarAssets = firstRelease.assets.filter((x: any) => x.name.endsWith('.asar'));
   const isNotByAction = asarAssets.some((x: any) => x.uploader.login !== 'github-actions[bot]');
-  const isModified = asarAssets.some((x: any) => x.created_at !== x.updated_at);
+  const isModified = asarAssets.some(
+    (x: any) =>
+      Math.abs(new Date(x.created_at).getTime() - new Date(x.updated_at).getTime()) > 1000,
+  );
   const firstReleaseTag = firstRelease.tag_name;
   const secondRelease = releases[1];
   if (!secondRelease) {
