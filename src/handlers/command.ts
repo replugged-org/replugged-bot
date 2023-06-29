@@ -80,13 +80,12 @@ export async function load(
                   guild: serverID,
                 };
                 subcommand = name;
-              }
-              if (cmd.config.slashCommand && subcommand) {
-                const subcommand = slashCommandSubcommands[name]?.data as
+              } else if (cmd.config.slashCommand && subcommand) {
+                const subcmd = slashCommandSubcommands[subcommand]?.data as
                   | ChatInputApplicationCommandData
                   | undefined;
-                if (subcommand) {
-                  subcommand.options!.push({
+                if (subcmd) {
+                  subcmd.options!.push({
                     type: ApplicationCommandOptionType.Subcommand,
                     name,
                     description: cmd.help.description.replace(/`/g, ""),
