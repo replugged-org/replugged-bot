@@ -1,5 +1,5 @@
 import { existsSync, mkdirSync } from "fs";
-import dotenv from 'dotenv';
+import dotenv from "dotenv";
 
 // this file is run before main.ts for some reason
 // and config.env doesn't load in time

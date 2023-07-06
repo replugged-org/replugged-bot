@@ -1,5 +1,9 @@
 import { IDS } from "../constants.js";
-import { cleanupGlobalCommands, cleanupGuildCommands, setupCommands } from "../handlers/slashcommands.js";
+import {
+  cleanupGlobalCommands,
+  cleanupGuildCommands,
+  setupCommands,
+} from "../handlers/slashcommands.js";
 import { CustomClient } from "../types/index.js";
 
 export default async (client: CustomClient): Promise<void> => {
