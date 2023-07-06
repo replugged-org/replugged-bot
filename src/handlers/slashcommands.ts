@@ -58,3 +58,12 @@ export async function cleanupGuildCommands(
     }
   });
 }
+
+export async function cleanupGlobalCommands(
+  client: CustomClient,
+): Promise<void> {
+  let globalCmds = await client.application.commands.fetch();
+  globalCmds.forEach((command) => {
+    command.delete().catch(() => null);
+  })
+}
