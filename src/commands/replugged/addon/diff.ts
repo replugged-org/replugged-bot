@@ -1,5 +1,6 @@
 import { ApplicationCommandOptionType } from "discord.js";
 import { Command, CommandUse } from "../../../stuct/index.js";
+import { GITHUB_RGX } from "../../../constants.js";
 
 export default class Diff extends Command {
   public constructor() {
@@ -36,7 +37,7 @@ export default class Diff extends Command {
           const firstMessage = await interaction.channel.messages.fetch(interaction.channel.id);
           if (firstMessage) {
             const content = firstMessage.content || "";
-            const match = content.matchAll(/https?:\/\/github\.com\/([^/\s]+\/[^/\s]+)/g);
+            const match = content.matchAll(GITHUB_RGX);
             const matches = [...match];
             if (matches.length === 1) {
               repoId = matches[0][1];
@@ -67,32 +68,39 @@ export default class Diff extends Command {
           const aDate = new Date(a.published_at);
           const bDate = new Date(b.published_at);
           return bDate.getTime() - aDate.getTime();
-        },
-      ) as Array<Record<string, string>>;
+      });
       const firstRelease = releases[0];
       if (!firstRelease) {
-        await command.sendMessage("No releases found");
+        await command.sendMessage('No releases found');
         return;
       }
       const firstReleaseName = firstRelease.name;
+      const asarAssets = firstRelease.assets.filter((x: Record<string, string>) => x.name.endsWith('.asar'));
+      const isNotByAction = asarAssets.some((x: Record<string, Record<string, string>>) => x.uploader.login !== 'github-actions[bot]');
+      const isModified = asarAssets.some(
+        (x: Record<string, string>) =>
+          Math.abs(new Date(x.created_at).getTime() - new Date(x.updated_at).getTime()) > 1000 ||
+          Math.abs(new Date(x.created_at).getTime() - new Date(firstRelease.published_at).getTime()) >
+            1000,
+      );
       const firstReleaseTag = firstRelease.tag_name;
       const secondRelease = releases[1];
       if (!secondRelease) {
-        await command.sendMessage("No second release found");
+        await command.sendMessage('No second release found');
         return;
       }
       const secondReleaseName = secondRelease.name;
       const secondReleaseTag = secondRelease.tag_name;
-
+    
       const tagsRes = await fetch(`https://api.github.com/repos/${repoId}/tags`, {
         headers,
       });
       if (!tagsRes.ok) {
-        console.error("Error getting tags", await tagsRes.text()); // May have sensitive info so we won't share it in Discord
-        await command.sendMessage("Error getting tags");
+        console.error('Error getting tags', await tagsRes.text()); // May have sensitive info so we won't share it in Discord
+        await command.sendMessage('Error getting tags');
         return;
       }
-
+    
       const json = await tagsRes.json();
       const firstTag = json.find((tag: Record<string, string>) => tag.name === firstReleaseTag);
       if (!firstTag) {
@@ -110,10 +118,12 @@ export default class Diff extends Command {
         return;
       }
       const secondCommit = secondTag.commit.sha;
-
+    
       const diffUrl = `https://github.com/${repoId}/compare/${secondCommit}...${firstCommit}`;
       await command.sendMessage(
-        `Update from ${secondReleaseName} to ${firstReleaseName}: <${diffUrl}>`,
+        `Update from ${secondReleaseName} to ${firstReleaseName}: <${diffUrl}>${
+          isNotByAction ? '\n:warning: Asar was not released by GitHub Actions.' : ''
+        }${isModified ? '\n:warning: Asar was modified after release.' : ''}`,
       );
     } catch {}
   }

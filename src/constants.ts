@@ -169,3 +169,6 @@ export const ADDONS_FOLDER = ((): string => {
 
   return path;
 })();
+
+// eslint-disable-next-line no-useless-escape
+export const GITHUB_RGX = /https?:\/\/github\.com\/([\w\.-]+\/[\w\.-]+)/g;

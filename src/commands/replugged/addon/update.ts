@@ -3,7 +3,7 @@ import { writeFile } from "fs/promises";
 import { ApplicationCommandOptionType } from "discord.js";
 import { Command, CommandUse } from "../../../stuct/index.js";
 import { createDirForFile } from "../../../helpers.js";
-import { ADDONS_FOLDER } from "../../../constants.js";
+import { ADDONS_FOLDER, GITHUB_RGX } from "../../../constants.js";
 
 export default class Update extends Command {
   public constructor() {
@@ -47,7 +47,7 @@ export default class Update extends Command {
           const firstMessage = await interaction.channel.messages.fetch(interaction.channel.id);
           if (firstMessage) {
             const content = firstMessage.content || "";
-            const match = content.matchAll(/https?:\/\/github\.com\/([^/\s]+\/[^/\s]+)/g);
+            const match = content.matchAll(GITHUB_RGX);
             const matches = [...match];
             if (matches.length === 1) {
               repoId = matches[0][1];
