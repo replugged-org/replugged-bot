@@ -92,27 +92,40 @@ export default class AddonGet extends Command {
       });
       return;
     }
-    
+
     addon.type = addon.type === "replugged-plugin" ? "Plugin" : "Theme"
 
     const embed = new Discord.EmbedBuilder()
       .setTitle(addon.name)
-      .setDescription(
-        `${addon.description}
-
-      ${addon.source && `[Source Code](${addon.source})`}
-      [Install ${addon.type}](https://replugged.dev/install?identifier=${addon.id})
-      `,
-      )
+      .setURL(`https://replugged.dev/store/${addon.id}`)
+      .setDescription(`${addon.description}`)
       .setColor(0x0099ff);
 
-    let user: Discord.User | null = null;
-    if (addon.author.discordID) {
-      user = await client.users.fetch(addon.author.discordID);
-    }
+    embed.addFields([
+      {
+        name: "Install",
+        value: `[Install ${addon.type}](https://replugged.dev/install?identifier=${addon.id})`,
+      }
+    ])
+
+    if (addon.source) {
+      embed.addFields([
+      {
+        name: "Source",
+        value: `${addon.source}`,
+      }
+    ])
+  }
+
+    const user = await client.prisma?.users.findFirst({
+      where: {
+        discord_id: addon.author.discordID,
+      },
+    });
+
     embed.setAuthor({
       name: addon.author.name,
-      iconURL: user?.avatarURL() || "",
+      iconURL: user?.avatar,
       url: addon.author.github && `https://github.com/${addon.author.github}`,
     });
 
@@ -123,7 +136,7 @@ export default class AddonGet extends Command {
     }
 
     embed.setFooter({
-      text: `Version: ${addon.version}`,
+      text: `v${addon.version}`,
     });
 
     await command.sendEmbed(embed);
@@ -136,7 +149,7 @@ export default class AddonGet extends Command {
       return addons
         .map((addon) => {
           return {
-            name: `${addon.type === "replugged-plugin" ? "Plugin" : "Theme"}: ${addon.id} - v${
+            name: `${addon.type === "replugged-plugin" ? "Plugin" : "Theme"}: ${addon.name} - v${
               addon.version
             }`,
             value: addon.id,
