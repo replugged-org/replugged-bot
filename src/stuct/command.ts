@@ -1,5 +1,5 @@
 import * as Discord from "discord.js";
-import { CommandConfig, CommandHelp, CommandOptions } from "../types/index.js";
+import { CommandConfig, CommandHelp, CommandOptions, CustomClient } from "../types/index.js";
 import { CommandUse } from "./commanduse.js";
 import type { Promisable } from "type-fest";
 
@@ -8,6 +8,7 @@ export type AutocompleteReturnType = Promisable<
 >;
 
 export interface AutocompleteArgsType<T> {
+  client: CustomClient;
   name: keyof T;
   value: string;
   interaction: Discord.AutocompleteInteraction;

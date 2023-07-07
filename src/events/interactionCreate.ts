@@ -95,7 +95,7 @@ export default async (client: CustomClient, interaction: Discord.Interaction): P
 
     try {
       const { name, value } = interaction.options.getFocused(true);
-      const result = await commandFile.autocomplete?.({ name, value, interaction });
+      const result = await commandFile.autocomplete?.({ client, name, value, interaction });
       if (!result) return;
       await interaction.respond(result.slice(0, 25));
     } catch (err) {
