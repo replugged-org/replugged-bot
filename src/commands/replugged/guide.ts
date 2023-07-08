@@ -18,6 +18,8 @@ const algolia =
     : null;
 const index = algolia?.initIndex("guide");
 
+const ID_RESULT_PREFIX = "ID-";
+
 // Mostly same config as the one in the client
 const getSearchOptions = ({
   boldMarks,
@@ -76,14 +78,17 @@ export default class Guide extends Command {
 
     const { query, mention } = args;
 
-    const result =
-      (await index
-        .getObject<DocSearchHit>(query, getSearchOptions({ boldMarks: true, limit: 1 }))
-        .catch(() => null)) ||
-      (await index
-        .search<DocSearchHit>(query, getSearchOptions({ limit: 1 }))
-        .then((res) => res.hits[0])
-        .catch(() => null));
+    const result = query.startsWith(ID_RESULT_PREFIX)
+      ? await index
+          .getObject<DocSearchHit>(
+            query.slice(ID_RESULT_PREFIX.length),
+            getSearchOptions({ boldMarks: true, limit: 1 }),
+          )
+          .catch(() => null)
+      : await index
+          .search<DocSearchHit>(query, getSearchOptions({ limit: 1 }))
+          .then((res) => res.hits[0])
+          .catch(() => null);
     if (!result) {
       await command.sendMessage("No results found", {
         ephemeral: true,
@@ -141,7 +146,7 @@ export default class Guide extends Command {
 
         return {
           name,
-          value: hit.objectID,
+          value: `${ID_RESULT_PREFIX}${hit.objectID}`,
         };
       })
       .filter(Boolean);
