@@ -93,7 +93,7 @@ export default class AddonGet extends Command {
       return;
     }
 
-    addon.type = addon.type === "replugged-plugin" ? "Plugin" : "Theme"
+    addon.type = addon.type === "replugged-plugin" ? "Plugin" : "Theme";
 
     const embed = new Discord.EmbedBuilder()
       .setTitle(addon.name)
@@ -105,17 +105,17 @@ export default class AddonGet extends Command {
       {
         name: "Install",
         value: `[Install ${addon.type}](https://replugged.dev/install?identifier=${addon.id})`,
-      }
-    ])
+      },
+    ]);
 
     if (addon.source) {
       embed.addFields([
-      {
-        name: "Source",
-        value: `${addon.source}`,
-      }
-    ])
-  }
+        {
+          name: "Source",
+          value: `${addon.source}`,
+        },
+      ]);
+    }
 
     const user = await client.prisma?.users.findFirst({
       where: {
@@ -142,8 +142,11 @@ export default class AddonGet extends Command {
     await command.sendEmbed(embed);
   }
 
-  public autocomplete({ name, value }: AutocompleteArgsType<Args>): AutocompleteReturnType {
-    if (name !== "addon") return [];
+  public autocomplete({
+    name,
+    value,
+  }: AutocompleteArgsType<Args>): Promise<AutocompleteReturnType> {
+    if (name !== "addon") return Promise.resolve([]);
 
     return getAllAddons().then((addons) => {
       return addons

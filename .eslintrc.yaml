@@ -37,8 +37,7 @@ rules:
   "@typescript-eslint/no-unused-vars":
     - error
     - argsIgnorePattern: "^_"
-  "@typescript-eslint/naming-convention":
-    - error
+  "@typescript-eslint/naming-convention": off
 
 overrides:
   - files: "**/*.{ts,tsx}"
@@ -51,6 +50,7 @@ overrides:
       no-void: off
       consistent-return: off
       no-case-declarations: off
+      "@typescript-eslint/naming-convention": off
 
   - files: "**/src/**/*.{ts,tsx}"
     extends: eslint-config-dmitmel/rules/typescript/with-type-checking

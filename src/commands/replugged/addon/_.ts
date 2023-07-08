@@ -10,6 +10,6 @@ export default class Addon extends Command {
   }
 
   public async run(command: CommandUse<Record<string, never>>): Promise<void> {
-    await command.sendMessage("uh");
+    await command.sendHelp();
   }
 }

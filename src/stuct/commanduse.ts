@@ -1,6 +1,7 @@
 import * as Discord from "discord.js";
 import {
   CanUse,
+  CommandFlags,
   CommandHelp,
   CommandResponseOptions,
   CommandUsage,
@@ -74,7 +75,7 @@ export class CommandUse<Args> {
     });
     if (db_user) {
       if (
-        this.command.config.flags.includes("admin") &&
+        this.command.config.flags.includes(CommandFlags.ADMIN) &&
         (db_user.flags & UserFlags.ADMIN) !== UserFlags.ADMIN
       ) {
         return {
@@ -85,7 +86,7 @@ export class CommandUse<Args> {
         };
       }
       if (
-        this.command.config.flags.includes("staff") &&
+        this.command.config.flags.includes(CommandFlags.STAFF) &&
         (db_user.flags & UserFlags.STAFF) !== UserFlags.STAFF
       ) {
         return {
@@ -96,7 +97,7 @@ export class CommandUse<Args> {
         };
       }
       if (
-        this.command.config.flags.includes("dev") &&
+        this.command.config.flags.includes(CommandFlags.DEV) &&
         (db_user.flags & UserFlags.DEVELOPER) !== UserFlags.DEVELOPER
       ) {
         return {
@@ -107,7 +108,7 @@ export class CommandUse<Args> {
         };
       }
       if (
-        this.command.config.flags.includes("support") &&
+        this.command.config.flags.includes(CommandFlags.SUPPORT) &&
         (db_user.flags & UserFlags.SUPPORT) !== UserFlags.SUPPORT
       ) {
         return {

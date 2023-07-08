@@ -1,11 +1,11 @@
 import * as Discord from "discord.js";
 import { CommandConfig, CommandHelp, CommandOptions, CustomClient } from "../types/index.js";
 import { CommandUse } from "./commanduse.js";
-import type { Promisable } from "type-fest";
 
-export type AutocompleteReturnType = Promisable<
-  Discord.ApplicationCommandOptionChoiceData[] | null | undefined
->;
+export type AutocompleteReturnType =
+  | Discord.ApplicationCommandOptionChoiceData[]
+  | null
+  | undefined;
 
 export interface AutocompleteArgsType<T> {
   client: CustomClient;
@@ -97,5 +97,10 @@ export abstract class Command {
 
   public abstract run(command: CommandUse<never>): Promise<void>;
 
-  public autocomplete?(interaction: AutocompleteArgsType<never>): AutocompleteReturnType;
+  public async autocomplete?(
+    interaction: AutocompleteArgsType<never>,
+  ): Promise<AutocompleteReturnType>;
+  public autocomplete?(
+    interaction: AutocompleteArgsType<never>,
+  ): AutocompleteReturnType | Promise<AutocompleteReturnType>;
 }

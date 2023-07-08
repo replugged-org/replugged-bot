@@ -10,6 +10,7 @@ import {
 import { Command, CommandUse } from "../../stuct/index.js";
 import { UserFlagKeys, UserFlags, UserFlagsArray } from "../../constants.js";
 import { users } from "@prisma/client";
+import { CommandFlags } from "../../types/command.js";
 
 const ROWS_PER_PAGE = 3;
 const BUTTONS_PER_ROW = 5;
@@ -30,7 +31,7 @@ export default class SetRoles extends Command {
           required: true,
         },
       ],
-      flags: ["admin"],
+      flags: [CommandFlags.ADMIN],
     });
   }
 

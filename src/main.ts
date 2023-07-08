@@ -5,15 +5,12 @@ import eventHandler from "./handlers/event.js";
 import * as commandHandler from "./handlers/command.js";
 import { readdirSync } from "fs";
 import { PrismaClient } from "@prisma/client";
-import algoliasearchProxy from "algoliasearch/lite.js";
 import { fileURLToPath, pathToFileURL } from "url";
 import path from "path";
 
-const algoliasearch = algoliasearchProxy.default || algoliasearchProxy;
-
 const dirname = path.dirname(fileURLToPath(import.meta.url));
 
-dotenv.config({ path: "config.env" });
+dotenv.config();
 
 const IntentFlags = Discord.IntentsBitField.Flags;
 
@@ -41,11 +38,6 @@ await Promise.all(
 await eventHandler(client);
 
 client.prisma = new PrismaClient();
-
-if (process.env.ALGOLIA_APP_ID && process.env.ALGOLIA_API_KEY) {
-  const algolia = algoliasearch(process.env.ALGOLIA_APP_ID, process.env.ALGOLIA_API_KEY)
-  client.algolia = algolia.initIndex("guide");
-}
 
 client.login(process.env.TOKEN).catch(async (e) => {
   await client.prisma?.$disconnect();

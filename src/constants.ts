@@ -1,9 +1,7 @@
 import { existsSync, mkdirSync } from "fs";
 import dotenv from "dotenv";
 
-// this file is run before main.ts for some reason
-// and config.env doesn't load in time
-dotenv.config({ path: "config.env" });
+dotenv.config();
 
 export const IDS: {
   server: string;
@@ -172,3 +170,6 @@ export const ADDONS_FOLDER = ((): string => {
 
 // eslint-disable-next-line no-useless-escape
 export const GITHUB_RGX = /https?:\/\/github\.com\/([\w\.-]+\/[\w\.-]+)/g;
+
+export const LOGO_URL =
+  "https://cdn.discordapp.com/attachments/1000955992068079716/1004196106055454820/Replugged-Logo.png";

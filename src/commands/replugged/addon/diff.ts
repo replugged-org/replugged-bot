@@ -1,6 +1,7 @@
 import { ApplicationCommandOptionType } from "discord.js";
 import { Command, CommandUse } from "../../../stuct/index.js";
 import { GITHUB_RGX } from "../../../constants.js";
+import { CommandFlags } from "../../../types/command.js";
 
 export default class Diff extends Command {
   public constructor() {
@@ -15,6 +16,7 @@ export default class Diff extends Command {
           type: ApplicationCommandOptionType.String,
         },
       ],
+      flags: [CommandFlags.STAFF],
     });
   }
 

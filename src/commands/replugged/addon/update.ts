@@ -4,6 +4,7 @@ import { ApplicationCommandOptionType } from "discord.js";
 import { Command, CommandUse } from "../../../stuct/index.js";
 import { createDirForFile } from "../../../helpers.js";
 import { ADDONS_FOLDER, GITHUB_RGX } from "../../../constants.js";
+import { CommandFlags } from "../../../types/command.js";
 
 export default class Update extends Command {
   public constructor() {
@@ -23,7 +24,7 @@ export default class Update extends Command {
           type: ApplicationCommandOptionType.String,
         },
       ],
-      flags: ["dev"],
+      flags: [CommandFlags.STAFF],
     });
   }
 

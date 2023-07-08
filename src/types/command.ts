@@ -62,7 +62,12 @@ export interface CommandOptions {
   subCommandName?: string;
 }
 
-export type CommandFlags = "dev" | "support" | "admin" | "staff";
+export enum CommandFlags {
+  DEV = "dev",
+  SUPPORT = "support",
+  ADMIN = "admin",
+  STAFF = "staff",
+}
 
 export interface CanUse {
   canUse: boolean;

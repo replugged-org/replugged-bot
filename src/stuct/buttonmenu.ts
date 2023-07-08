@@ -206,7 +206,7 @@ export class ButtonMenu extends EventEmitter {
         const typedComponent =
           component as Discord.ComponentBuilder<Discord.APIButtonComponentWithCustomId>;
 
-        // eslint-disable-next-line @typescript-eslint/naming-convention
+         
         const { custom_id } = typedComponent.data;
         if (typeof custom_id !== "string") return;
 
