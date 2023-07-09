@@ -97,6 +97,7 @@ export default class Guide extends Command {
     }
 
     const pages = [...new Set(Object.values(result.hierarchy).slice(0, 2).filter(Boolean))];
+    if (pages[0] === "Documentation") pages.shift();
     const headings = Object.values(result.hierarchy).slice(2).filter(Boolean);
     const hasHeadings = headings.length > 0;
 
