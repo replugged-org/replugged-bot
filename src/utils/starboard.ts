@@ -15,8 +15,27 @@ export const EMOTES: BoardDecoration = [
   [ 20, '✨', 0xffff00 ],
 ];
 
-export function createStarboardMessage(stars: number, message: Discord.Message): Discord.BaseMessageOptions {
+export async function createStarboardMessage(stars: number, message: Discord.Message): Promise<Discord.BaseMessageOptions> {
   const [, star, color] = EMOTES.filter((e) => e[0] <= stars).pop()!;
+
+  let reference_embed;
+  let reference;
+  if (message.reference) {
+    reference = await message.fetchReference()
+    reference_embed = new Discord.EmbedBuilder()
+      .setAuthor({
+        name: `Replying to ${reference.author.username}`,
+        iconURL: reference.author.avatarURL() ?? "",
+      })
+      .addFields([{
+        name: "Jump to Reply",
+        value: `[Click Here](${reference.url})`
+      }])
+      .setImage(reference.attachments.first()?.url || null)
+      .setTimestamp(reference.editedTimestamp || reference.createdTimestamp)
+    
+    if (reference.content) reference_embed.setDescription(reference.cleanContent)
+  }
 
   const embed = new Discord.EmbedBuilder()
     .setAuthor({
@@ -29,14 +48,32 @@ export function createStarboardMessage(stars: number, message: Discord.Message):
     }])
     .setImage(message.attachments.first()?.url || null)
     .setColor(color)
+    .setTimestamp(message.editedTimestamp || message.createdTimestamp)
 
   if (message.content) embed.setDescription(message.cleanContent)
 
   return {
     content: `${star} **${stars}** - <#${message.channelId}>`,
-    embeds: [
+    embeds: reference_embed ? [
+      reference_embed,
       embed,
       ...message.embeds
+    ] : [
+      embed,
+      ...message.embeds
+    ],
+    components: [
+      {
+        type: 1,
+        components: message.attachments.map((att) => {
+          return {
+            type: 2,
+            style: 5,
+            label: att.name,
+            url: att.url,
+          }
+        }).filter(Boolean)
+      }
     ]
   }
 }
@@ -75,13 +112,13 @@ export async function updateStarboard(client: CustomClient, message: Discord.Mes
       if (entry.messageId) {
         msg = await channel.messages.fetch(entry.messageId);
         if (reaction.count >= BOARD_MINIMUM) {
-          await msg.edit(createStarboardMessage(reaction.count, message));
+          await msg.edit(await createStarboardMessage(reaction.count, message));
         } else {
           await msg.delete();
           msg = undefined; // to remove id from db
         }
       } else if (reaction.count >= BOARD_MINIMUM) {
-        msg = await channel.send(createStarboardMessage(reaction.count, message));
+        msg = await channel.send(await createStarboardMessage(reaction.count, message));
       }
 
       await client.prisma?.starboard.update({
@@ -98,7 +135,7 @@ export async function updateStarboard(client: CustomClient, message: Discord.Mes
 
     let msg;
     if (reaction.count >= BOARD_MINIMUM) {
-      msg = await channel.send(createStarboardMessage(reaction.count, message));
+      msg = await channel.send(await createStarboardMessage(reaction.count, message));
     }
 
     await client.prisma?.starboard.create({
