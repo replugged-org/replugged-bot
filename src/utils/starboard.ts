@@ -26,11 +26,8 @@ export async function createStarboardMessage(stars: number, message: Discord.Mes
       .setAuthor({
         name: `Replying to ${reference.author.username}`,
         iconURL: reference.author.avatarURL() ?? "",
+        url: reference.url
       })
-      .addFields([{
-        name: "Jump to Reply",
-        value: `[Click Here](${reference.url})`
-      }])
       .setImage(reference.attachments.first()?.url || null)
       .setTimestamp(reference.editedTimestamp || reference.createdTimestamp)
     
@@ -41,16 +38,22 @@ export async function createStarboardMessage(stars: number, message: Discord.Mes
     .setAuthor({
       name: message.author.username,
       iconURL: message.author.avatarURL() ?? "",
+      url: message.url
     })
-    .addFields([{
-      name: "Jump to Message",
-      value: `[Click Here](${message.url})`
-    }])
     .setImage(message.attachments.first()?.url || null)
     .setColor(color)
     .setTimestamp(message.editedTimestamp || message.createdTimestamp)
 
   if (message.content) embed.setDescription(message.cleanContent)
+
+  const linked_attachments = message.attachments.map((a) => {
+    return {
+      type: 2,
+      style: 5,
+      label: a.name,
+      url: a.url,
+    }
+  })
 
   return {
     content: `${star} **${stars}** - <#${message.channelId}>`,
@@ -65,16 +68,28 @@ export async function createStarboardMessage(stars: number, message: Discord.Mes
     components: [
       {
         type: 1,
-        components: message.attachments.map((att) => {
-          return {
+        components: [
+          {
             type: 2,
             style: 5,
-            label: att.name,
-            url: att.url,
+            label: "Jump to Message",
+            url: message.url,
           }
-        }).filter(Boolean)
+        ].concat(reference ? [
+          {
+            type: 2,
+            style: 5,
+            label: "Jump to Reply",
+            url: reference.url,
+          }
+        ] : [])
       }
-    ]
+    ].concat(linked_attachments.length ? [
+      {
+        type: 1,
+        components: linked_attachments
+      }
+    ] : [])
   }
 }
 
