@@ -18,6 +18,10 @@ const algolia =
     : null;
 const index = algolia?.initIndex("guide");
 
+if (!index) {
+  throw new Error("Algolia is not configured");
+}
+
 const ID_RESULT_PREFIX = "ID-";
 
 // Mostly same config as the one in the client

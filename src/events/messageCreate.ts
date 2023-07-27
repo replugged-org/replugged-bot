@@ -12,16 +12,18 @@ export default async (client: CustomClient, message: Message): Promise<void> => 
 
   if (!db_user) {
     // Was used temporarily in order to  add people onto db easily, will be removed from this place soon.
-    // await client.prisma?.users.create({
-    //   data: {
-    //     name: message.author.username,
-    //     discriminator: message.author.discriminator,
-    //     discord_id: message.author.id,
-    //     avatar: message.author.avatarURL() ?? "",
-    //     email: `${message.author.username}-${Math.random().toString(36).substring(2)}@replugged.com`,
-    //     updated_at: new Date(),
-    //   }
-    // });
+    await client.prisma?.users.create({
+      data: {
+        name: message.author.username,
+        discriminator: message.author.discriminator,
+        discord_id: message.author.id,
+        avatar: message.author.avatarURL() ?? "",
+        email: `${message.author.username}-${Math.random()
+          .toString(36)
+          .substring(2)}@replugged.com`,
+        updated_at: new Date(),
+      },
+    });
     return;
   }
   if (

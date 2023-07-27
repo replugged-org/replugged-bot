@@ -54,3 +54,9 @@ model users {
   accounts       accounts[]
   patreon_data   patreon_data[]
 }
+
+model starboard {
+  id            String          @unique
+  messageId     String
+  starcount     Int
+}
