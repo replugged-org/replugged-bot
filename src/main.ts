@@ -23,6 +23,7 @@ const client = new Discord.Client({
     IntentFlags.GuildMessageReactions,
     IntentFlags.GuildInvites,
   ],
+  partials: [ Discord.Partials.Message, Discord.Partials.Channel, Discord.Partials.Reaction ],
 }) as CustomClient;
 
 client.commands = new Discord.Collection();

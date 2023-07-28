@@ -3,7 +3,6 @@ import { CustomClient } from "../types/index.js";
 import { STARBOARD_EMOTE, updateStarboard } from "../utils/starboard.js";
 
 export default async (client: CustomClient, reaction: Discord.MessageReaction, _: Discord.GuildMember): Promise<void> => {
-  console.log(reaction);
 	if (reaction.partial) {
 		try {
 			await reaction.fetch();
