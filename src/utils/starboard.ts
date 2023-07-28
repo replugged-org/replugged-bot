@@ -107,15 +107,8 @@ export async function updateStarboard(client: CustomClient, message: Discord.Mes
       const msg = await channel.messages.fetch(entry.messageId);
       await msg.delete()
     }
-    await client.prisma?.starboard.update({
-      where: { id: message.id },
-      data: {
-        id: message.id,
-        channelId: message.channelId,
-        authorId: message.author.id,
-        messageId: "",
-        starcount: 0
-      }
+    await client.prisma?.starboard.delete({
+      where: { id: message.id }
     });
     return;
   }
@@ -137,6 +130,32 @@ export async function updateStarboard(client: CustomClient, message: Discord.Mes
         msg = await channel.send(await createStarboardMessage(reaction.count, message));
       }
 
+      if (reaction.count) {
+        await client.prisma?.starboard.update({
+          where: { id: message.id },
+          data: {
+            id: message.id,
+            channelId: message.channelId,
+            authorId: message.author.id,
+            messageId: msg?.id || "",
+            starcount: reaction.count
+          }
+        })
+      } else {
+        await client.prisma?.starboard.delete({
+          where: { id: message.id }
+        });
+      }
+    }
+  } else if (IDS.channels.starboard) {
+    const channel = await client.channels.fetch(IDS.channels.starboard) as Discord.TextChannel;
+
+    let msg;
+    if (reaction.count >= BOARD_MINIMUM) {
+      msg = await channel.send(await createStarboardMessage(reaction.count, message));
+    }
+    
+    if (reaction.count) {
       await client.prisma?.starboard.update({
         where: { id: message.id },
         data: {
@@ -147,23 +166,10 @@ export async function updateStarboard(client: CustomClient, message: Discord.Mes
           starcount: reaction.count
         }
       })
+    } else {
+      await client.prisma?.starboard.delete({
+        where: { id: message.id }
+      });
     }
-  } else if (IDS.channels.starboard) {
-    const channel = await client.channels.fetch(IDS.channels.starboard) as Discord.TextChannel;
-
-    let msg;
-    if (reaction.count >= BOARD_MINIMUM) {
-      msg = await channel.send(await createStarboardMessage(reaction.count, message));
-    }
-
-    await client.prisma?.starboard.create({
-      data: {
-        id: message.id,
-        channelId: message.channelId,
-        authorId: message.author.id,
-        messageId: msg?.id || "",
-        starcount: reaction.count
-      }
-    })
   }
 }

@@ -14,9 +14,9 @@ export default class Stats extends Command {
   public async run(command: CommandUse<Record<string, never>>): Promise<void> {
     const { client, interaction } = command;
 
-    const starred = await client.prisma?.starboard.findMany({
+    const starred = (await client.prisma?.starboard.findMany({
       where: { authorId: interaction.user.id },
-    });
+    }))?.filter((star) => star.starcount > 0);
 
     const stars = starred?.map((star) => star.starcount).reduce((a, b) => a + b, 0) || 0;
     const timesOnStarboard = starred?.filter((star) => star.starcount >= BOARD_MINIMUM).length || 0;
