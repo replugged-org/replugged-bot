@@ -6,7 +6,6 @@ type BoardDecoration = Array<[ number, string, number ]>;
 
 export const BOARD_MINIMUM = 1;
 export const STARBOARD_EMOTE = '⭐';
-export const GENERIC_STAR_OBJ = {messageId: '', stars: 0};
 
 export const EMOTES: BoardDecoration = [
   [ 0, '⭐', 0xffffff ],
@@ -112,6 +111,8 @@ export async function updateStarboard(client: CustomClient, message: Discord.Mes
       where: { id: message.id },
       data: {
         id: message.id,
+        channelId: message.channelId,
+        authorId: message.author.id,
         messageId: "",
         starcount: 0
       }
@@ -140,6 +141,8 @@ export async function updateStarboard(client: CustomClient, message: Discord.Mes
         where: { id: message.id },
         data: {
           id: message.id,
+          channelId: message.channelId,
+          authorId: message.author.id,
           messageId: msg?.id || "",
           starcount: reaction.count
         }
@@ -156,6 +159,8 @@ export async function updateStarboard(client: CustomClient, message: Discord.Mes
     await client.prisma?.starboard.create({
       data: {
         id: message.id,
+        channelId: message.channelId,
+        authorId: message.author.id,
         messageId: msg?.id || "",
         starcount: reaction.count
       }

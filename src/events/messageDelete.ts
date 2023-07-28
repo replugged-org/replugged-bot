@@ -11,7 +11,7 @@ export default async (client: CustomClient, message: Discord.Message): Promise<v
     if (IDS.channels.starboard) {
       const channel = await client.channels.fetch(IDS.channels.starboard) as Discord.TextChannel;
 
-      if (channel) {
+      if (channel && entry.messageId) {
         await (await channel.messages.fetch(entry.messageId)).delete();
       }
     }

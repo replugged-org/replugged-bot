@@ -64,7 +64,7 @@ export default class Help extends Command {
           return cats;
         }, {});
 
-      const categoryList = ["Information", "Replugged"];
+      const categoryList = ["Information", "Replugged", "Starboard"];
 
       categoryPages = Object.fromEntries(
         Object.entries(categories).map((category): [string, BaseMessageOptions[]] => {

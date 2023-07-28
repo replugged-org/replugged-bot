@@ -57,6 +57,8 @@ model users {
 
 model starboard {
   id            String          @unique
+  channelId     String
+  authorId      String
   messageId     String
   starcount     Int
 }
