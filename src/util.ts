@@ -3,19 +3,18 @@ import EventEmitter from 'events';
 import { readdir, stat } from 'fs/promises';
 import { URL } from 'url';
 
-export async function readdirRecursive (path: URL): Promise<string[]> {
+export async function readdirRecursive(path: URL): Promise<string[]> {
   const entries = await readdir(path);
   const pending: Array<Promise<string[]>> = [];
   const files: string[] = [];
 
-  for(const entry of entries) {
+  for (const entry of entries) {
     const entryUrl = new URL(`./${entry}`, path);
     const res = await stat(entryUrl);
-    if(res.isDirectory()) {
+    if (res.isDirectory()) {
       entryUrl.pathname += '/';
       pending.push(readdirRecursive(entryUrl));
-    }
-    else {
+    } else {
       files.push(entryUrl.pathname);
     }
   }
@@ -23,14 +22,16 @@ export async function readdirRecursive (path: URL): Promise<string[]> {
   return Promise.all(pending).then((found) => files.concat(...found));
 }
 
-export function isComponentInteraction(interaction: Interaction): interaction is ComponentInteraction {
+export function isComponentInteraction(
+  interaction: Interaction,
+): interaction is ComponentInteraction {
   return interaction.type === Constants.InteractionTypes.MESSAGE_COMPONENT;
 }
 
 export declare interface InteractionCollector {
-  on(event: 'interaction', handler: (interaction: ComponentInteraction) => unknown): this,
-  on(event: 'end', handler: () => unknown): this,
-  on(event: string, handler: Function): this
+  on(event: 'interaction', handler: (interaction: ComponentInteraction) => unknown): this;
+  on(event: 'end', handler: () => unknown): this;
+  on(event: string, handler: Function): this;
 }
 
 export class InteractionCollector extends EventEmitter {
@@ -43,17 +44,20 @@ export class InteractionCollector extends EventEmitter {
   private collected: number = 0;
   private runningTimeout?: NodeJS.Timeout;
 
-  constructor(message: Message, {
-    timeout,
-    resetOnInteract,
-    max
-  }: {
-    timeout?: number | undefined,
-    resetOnInteract?: boolean | undefined,
-    max?: number | undefined
-  } = {}) {
+  constructor(
+    message: Message,
+    {
+      timeout,
+      resetOnInteract,
+      max,
+    }: {
+      timeout?: number | undefined;
+      resetOnInteract?: boolean | undefined;
+      max?: number | undefined;
+    } = {},
+  ) {
     super();
-    
+
     this.msgId = message.id;
     this.client = message._client;
 
