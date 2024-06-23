@@ -57,6 +57,10 @@ export async function executor(msg: Message<GuildTextableChannel>, args: string[
     headers.Authorization = `Bearer ${token}`;
   }
 
+  // "Comment" section of args, to be ignored
+  const endIndex = args.findIndex((x) => /^[-/]{1,2}$/.test(x));
+  if (endIndex !== -1) args = args.slice(0, endIndex);
+
   // eslint-disable-next-line prefer-const
   let [repoId, addonId] = args;
 
