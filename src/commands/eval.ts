@@ -9,9 +9,10 @@ export async function executor(msg: Message<GuildTextableChannel>, args: string[
   const client = msg._client;
   const channel = msg.channel;
   const dbCollection = client.mango.collection<DBUser>('users');
-  const dbAuthor = await dbCollection.findOne({_id: msg.author.id});
-  if (!dbAuthor || (dbAuthor.flags & UserFlags.ADMIN) === 0) return msg.channel.createMessage('nope');
-  
+  const dbAuthor = await dbCollection.findOne({ _id: msg.author.id });
+  if (!dbAuthor || (dbAuthor.flags & UserFlags.ADMIN) === 0)
+    return msg.channel.createMessage('nope');
+
   try {
     const res = await eval(args.join(' '));
     if (res) {
@@ -22,8 +23,7 @@ export async function executor(msg: Message<GuildTextableChannel>, args: string[
         channel.createMessage('Could not send result.');
       });
     }
-  }
-  catch (e) {
+  } catch (e) {
     msg.addReaction('⚠️');
     return channel.createMessage(`Error: ${e}`);
   }
